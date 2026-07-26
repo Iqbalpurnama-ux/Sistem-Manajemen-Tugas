@@ -1,0 +1,105 @@
+DOKUMEN SPESIFIKASI PROYEK (REVISI)
+Sistem Informasi Manajemen Tugas Terintegrasi Berbasis Web
+Dilengkapi Fitur Cloud Storage & Notifikasi Otomatis (Email, dengan WhatsApp sebagai Pengembangan Lanjutan)
+CATATAN REVISI
+Dokumen ini merupakan hasil review dan penyempurnaan dari spesifikasi awal. Perubahan utama mencakup perbaikan skema database, penambahan mekanisme keamanan (RLS), pencegahan duplikasi notifikasi, serta usulan fitur tambahan. Bagian yang direvisi ditandai dengan label "[REVISI]" atau "[BARU]".
+1. Latar Belakang & Deskripsi Proyek
+Proyek ini merupakan pengembangan Sistem Informasi Manajemen Tugas Terintegrasi Berbasis Web. Sistem ini dirancang untuk mengatasi tantangan dalam pengorganisasian tugas, manajemen tenggat waktu (deadline), dan penyimpanan dokumen akademik/pekerjaan secara terpusat.
+Berbeda dengan aplikasi to-do list konvensional, sistem ini mengimplementasikan pendekatan berbasis komputasi awan (cloud) dengan database relasional terstruktur. Nilai jual utama dari sistem ini adalah kemampuannya dalam mengotomatisasi pengingat tugas dan manajemen berkas (upload/download) yang terintegrasi langsung dengan Cloud Storage. Pada tahap awal, pengingat dikirim melalui email; notifikasi WhatsApp akan menyusul sebagai pengembangan tahap lanjutan. [REVISI]
+2. Arsitektur & Teknologi (Tech Stack)
+Sistem ini dibangun menggunakan ekosistem teknologi modern berbasis JavaScript dan Backend-as-a-Service (BaaS) relasional:
+Frontend & Logika Aplikasi: Next.js (React.js)
+Database & Autentikasi: Supabase (PostgreSQL) — dipilih karena dukungan struktur relasional (ERD) dan integritas data yang tinggi.
+Manajemen File: Supabase Storage (Bucket) untuk menyimpan file fisik tugas secara publik atau privat.
+Automasi Penjadwalan: Vercel Cron Jobs untuk menjalankan trigger pengecekan deadline.
+Sistem Notifikasi: Email (SMTP/Resend/SendGrid tier gratis) sebagai kanal notifikasi utama pada tahap awal. Notifikasi WhatsApp direncanakan sebagai pengembangan tahap lanjutan (lihat Bagian 8). [REVISI]
+[REVISI] Catatan Teknis Stack
+Perlu dipastikan sejak awal batas frekuensi Vercel Cron Job sesuai plan yang digunakan (gratis vs berbayar), karena ini menentukan seberapa sering sistem dapat mengecek deadline secara realistis.
+3. Spesifikasi Fitur Utama
+A. Manajemen Tugas Inti (CRUD)
+Pembuatan tugas dengan parameter: Judul, Deskripsi, Kategori, Tingkat Prioritas, dan Tenggat Waktu (Datetime).
+Pembaruan status progres tugas (misalnya: To-Do, In Progress, Done).
+Pengelompokan tugas berdasarkan label, menggunakan relasi many-to-many, sehingga satu tugas dapat memiliki banyak label dan sebaliknya.
+B. Manajemen Berkas Terintegrasi (Cloud Storage) [REVISI]
+Pengguna dapat mengunggah berkas terkait tugas (PDF, DOCX, ZIP). File fisik akan dikirim secara aman ke Supabase Storage. Database hanya menyimpan URL atau path unik dari berkas tersebut, memastikan efisiensi database (menghindari BLOB).
+Perbaikan
+Spesifikasi awal menyimpan satu kolom File_URL langsung di tabel Tasks, sehingga satu tugas hanya bisa memiliki satu lampiran. Revisi ini memisahkan lampiran ke tabel Attachments tersendiri (relasi one-to-many terhadap Tasks) agar satu tugas dapat memiliki banyak file sekaligus.
+Validasi tipe file dibatasi whitelist (PDF, DOCX, ZIP) dan batas ukuran file maksimum ditetapkan di sisi server, bukan hanya di client.
+Antarmuka untuk mengunduh (download) kembali file yang telah disimpan.
+C. Sistem Notifikasi Otomatis (Email) [REVISI]
+Sistem secara mandiri memonitor batas waktu pengumpulan tugas. Jika sebuah tugas mendekati deadline (misal H-1), Cron Job memicu server untuk mengecek database. Jika terdeteksi, sistem mengirimkan email peringatan ke alamat email pengguna menggunakan layanan pengiriman email dengan tier gratis (contoh: Resend, SendGrid, atau SMTP biasa).
+[REVISI] Perubahan Kanal Notifikasi
+Pada tahap awal pengembangan, notifikasi dikirim melalui email — kanal ini sepenuhnya gratis, resmi (tidak melanggar ketentuan layanan apa pun), dan tidak bergantung pada infrastruktur tambahan yang harus menyala 24/7 seperti gateway WhatsApp tidak resmi. Notifikasi WhatsApp direncanakan sebagai pengembangan tahap lanjutan setelah fitur inti stabil — lihat Bagian 8 (Rencana Pengembangan Lanjutan).
+Perbaikan Krusial
+Karena Cron Job berjalan berulang setiap jam, tanpa penanda status notifikasi maka satu tugas yang sama bisa mengirim email berkali-kali dalam rentang 24 jam menjelang deadline. Setiap tugas kini menyimpan status/log notifikasi agar hanya terkirim satu kali per tahap pengingat.
+Reminder bertingkat dan dapat dikonfigurasi (contoh: H-3, H-1, hari-H) [BARU].
+Template email berisi ringkasan tugas, deadline, dan tautan langsung ke halaman tugas terkait [BARU].
+Preferensi notifikasi dapat diatur oleh pengguna per tugas maupun secara global [BARU].
+4. Struktur Database (Entity Relationship Diagram) [REVISI]
+Konsep arsitektur data dibangun di atas PostgreSQL (Supabase). Struktur berikut telah direvisi untuk memperbaiki keterbatasan pada rancangan sebelumnya.
+Nama Tabel
+Deskripsi & Fungsi Utama
+Profiles
+Data profil pengguna (user_id — relasi 1:1 ke auth.users, Nama, Nomor WhatsApp, Preferensi Notifikasi). Autentikasi & password dikelola oleh Supabase Auth, tidak disimpan manual.
+Tasks
+Tabel sentral tugas (ID Tugas, ID User, Judul, Deskripsi, Deadline, Status, Prioritas, created_at, updated_at).
+Attachments
+[BARU] Menyimpan berkas per tugas (ID, task_id, file_url, file_name, file_type, file_size, uploaded_at) — relasi one-to-many terhadap Tasks.
+Labels
+Menyimpan daftar kategori/label (ID Label, Nama Label, Warna).
+Task_Labels
+Tabel pivot (many-to-many) yang menghubungkan tabel Tasks dan Labels.
+Notifications_Log
+[BARU] Mencatat riwayat pengingat yang telah terkirim (ID, task_id, tahap_reminder, channel — email/whatsapp, status_kirim, sent_at) — mencegah notifikasi terkirim berulang dan menjadi audit trail. Kolom channel disiapkan agar WhatsApp dapat ditambahkan tanpa mengubah struktur tabel.
+Catatan Teknis Relasi: Penggunaan tabel Task_Labels tetap krusial dalam skema ini karena memungkinkan fleksibilitas tingkat tinggi. Sebagai contoh, tugas "Membuat Jurnal" dapat memiliki label "Urgent" sekaligus label "Tugas Kuliah" tanpa redundansi data.
+[BARU] Keamanan Data — Row Level Security (RLS)
+Karena Supabase mengekspos PostgreSQL langsung melalui API, seluruh tabel wajib menerapkan kebijakan Row Level Security agar pengguna hanya dapat mengakses dan memodifikasi datanya sendiri. Tanpa RLS, celah keamanan memungkinkan satu pengguna melihat atau mengubah data pengguna lain.
+5. Alur Kerja Sistem (Workflow)
+A. Alur Upload Berkas Tugas
+Pengguna memilih file di antarmuka (client-side / Next.js).
+Next.js mengirim (POST) file ke Supabase Storage.
+Supabase mengembalikan URL publik/privat dari file tersebut.
+Next.js menyimpan data file (URL, nama, tipe, ukuran) ke dalam tabel Attachments, terhubung ke task_id terkait. [REVISI]
+B. Alur Notifikasi Email Otomatis [REVISI]
+Vercel Cron Job aktif setiap jam tertentu (misal 08:00 WIB).
+Cron mengeksekusi endpoint API di Next.js.
+API menjalankan query SQL ke Supabase: mencari baris pada tabel Tasks dengan Status != 'Done', Deadline berjarak sesuai tahap reminder (H-3/H-1/H-0), DAN belum tercatat pada Notifications_Log untuk tahap tersebut. [REVISI]
+Untuk setiap tugas yang ditemukan, API mengirim permintaan ke layanan pengiriman email (Resend/SendGrid/SMTP). [REVISI]
+Layanan email mengeksekusi pengiriman pesan peringatan ke alamat email pengguna, lalu sistem mencatat hasilnya ke Notifications_Log. [REVISI]
+6. Risiko Teknis yang Perlu Diperhatikan [BARU]
+Batas kuota pengiriman pada tier gratis layanan email (Resend/SendGrid biasanya membatasi jumlah email/hari) perlu dipantau agar tidak terlampaui saat jumlah pengguna bertambah.
+Email berpotensi masuk folder spam jika domain pengirim belum dikonfigurasi dengan benar (SPF/DKIM) — perlu diperhatikan sejak setup awal agar notifikasi benar-benar sampai ke pengguna.
+Validasi file upload di sisi server wajib ada (ukuran maksimum, whitelist tipe file) untuk mencegah penyalahgunaan storage.
+Row Level Security wajib diterapkan pada seluruh tabel sejak tahap awal pengembangan, bukan ditambahkan belakangan.
+7. Desain Antarmuka (UI) — Tema Claymorphism [BARU]
+Antarmuka aplikasi dirancang menggunakan pendekatan Claymorphism — gaya visual yang menampilkan elemen seolah terbuat dari tanah liat lunak: permukaan empuk, sudut membulat besar, dan bayangan ganda (gelap di satu sisi, terang di sisi berlawanan) sehingga setiap komponen terlihat menonjol keluar dari layar. Gaya ini dipilih untuk memberi kesan hangat, ramah, dan tidak kaku, cocok untuk aplikasi produktivitas personal yang digunakan sehari-hari.
+Elemen Desain
+Spesifikasi
+Palet Warna
+Latar belakang gradien lavender pastel (#E7ECFB → #F1E8FB); aksen utama indigo (#8C7CF0); koral (#FF8F71) untuk prioritas tinggi; mint (#4FCDA8) untuk status selesai; kuning (#FFC960) untuk prioritas sedang.
+Tipografi
+Baloo 2 (rounded, tebal) untuk judul & angka statistik; Inter untuk teks isi agar tetap mudah dibaca.
+Efek Bayangan (Clay Shadow)
+Kombinasi box-shadow gelap dan terang pada tiap elemen (mis. 9px 9px 18px gelap, -9px -9px 18px terang) untuk efek timbul; bayangan inset digunakan pada elemen yang sedang ditekan/aktif (mis. checkbox selesai).
+Komponen Kunci
+Kartu tugas timbul dengan checkbox clay, badge prioritas berwarna, cincin statistik 3D (clay ring) untuk progres, banner pengingat notifikasi (email pada tahap awal, siap diperluas ke WhatsApp), dan tombol tambah tugas mengambang (FAB) dengan animasi "squish" saat ditekan.
+Interaksi
+Kartu terangkat halus saat hover; tombol/checkbox memberi efek tertekan (inset shadow) saat diklik untuk kesan taktil khas clay.
+Purwarupa (mockup) interaktif dari desain ini telah dibuat dalam format HTML terpisah, menampilkan dashboard lengkap dengan sidebar label, daftar tugas, statistik progres, dan banner pengingat notifikasi sesuai alur kerja pada Bagian 5.
+8. Rencana Pengembangan Lanjutan: Notifikasi WhatsApp [BARU]
+Notifikasi WhatsApp tidak dihapus dari visi produk — hanya dijadwalkan sebagai pengembangan tahap kedua, setelah alur notifikasi email dan fitur inti berjalan stabil. Catatan berikut disiapkan agar implementasinya di masa depan lebih terarah.
+Opsi gateway: library open-source self-hosted seperti Baileys atau whatsapp-web.js (gratis, tanpa biaya per pesan), atau alternatif ringan seperti CallMeBot/tier gratis Fonnte untuk skala kecil.
+Kebutuhan nomor: nomor WhatsApp terpisah (disarankan SIM prabayar baru, bukan nomor pribadi) agar risiko pemblokiran tidak memengaruhi akun utama.
+Kebutuhan infrastruktur: library seperti Baileys butuh proses yang menyala terus-menerus (long-running), sehingga tidak cocok dijalankan di Vercel (serverless). Perlu VPS kecil atau platform dengan dukungan proses long-running (Railway, Fly.io, Render — perhatikan batas free tier masing-masing).
+Mitigasi risiko pemblokiran: rate limiting antar pesan, batas jumlah pesan/jam, dan pemantauan status sesi agar dapat re-scan QR bila terputus.
+Struktur data sudah disiapkan: kolom channel pada tabel Notifications_Log memungkinkan penambahan kanal WhatsApp tanpa mengubah skema database.
+Jika kebutuhan berkembang ke arah komersial (SaaS) dengan basis pengguna besar, migrasi ke WhatsApp Business API resmi atau penyedia berbayar (Fonnte, Wablas, Twilio) baru layak dipertimbangkan demi stabilitas dan legalitas jangka panjang.
+9. Usulan Fitur Tambahan [BARU]
+Sub-task / checklist di dalam satu tugas untuk memecah pekerjaan yang kompleks.
+Kolaborasi & penugasan (assign) tugas ke pengguna lain, untuk pengembangan ke arah kolaborasi tim.
+Dashboard statistik: jumlah tugas selesai vs terlambat, tren produktivitas mingguan.
+Pencarian & filter tugas berdasarkan label, status, atau rentang deadline.
+Export tugas ke Google Calendar (iCal) atau ke format PDF/Excel.
+Tugas berulang (recurring task) untuk aktivitas rutin mingguan/bulanan.
+10. Penutup
+Sistem ini dirancang dengan pendekatan modular yang skalabel. Dengan perbaikan pada skema database, penambahan mekanisme keamanan (RLS), pencegahan duplikasi notifikasi, serta beberapa fitur tambahan, arsitektur berbasis Supabase dan Next.js memberikan pondasi yang lebih solid — tidak hanya untuk memenuhi kebutuhan produktivitas personal, tetapi juga layak dikembangkan lebih lanjut menjadi aplikasi komersial (SaaS) atau digunakan sebagai studi kasus pengembangan sistem informasi berstandar industri.
