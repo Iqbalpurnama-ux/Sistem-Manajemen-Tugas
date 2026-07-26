@@ -1,0 +1,116 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-geist-mono);
+  
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  
+  --color-priority-high: var(--priority-high);
+  --color-priority-medium: var(--priority-medium);
+  --color-priority-low: var(--priority-low);
+
+  --color-destructive: var(--destructive);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Claymorphism Shadows */
+  --shadow-clay: 8px 8px 16px var(--clay-shadow-dark), -8px -8px 16px var(--clay-shadow-light);
+  --shadow-clay-inset: inset 6px 6px 12px var(--clay-shadow-dark), inset -6px -6px 12px var(--clay-shadow-light);
+  --shadow-clay-modal: 12px 12px 24px rgba(130, 140, 160, 0.4), -12px -12px 24px rgba(255, 255, 255, 0.9);
+
+  /* Claymorphism Radius */
+  --radius-clay: 1.5rem;
+  --radius-clay-lg: 2rem;
+  
+  /* Standard Radius mapped to clay */
+  --radius-sm: 0.75rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.5rem;
+  --radius-xl: 2rem;
+  --radius-2xl: 2.5rem;
+}
+
+:root {
+  /* Pastel Light Lavender */
+  --background: hsl(230, 40%, 95%);
+  --foreground: hsl(230, 30%, 20%);
+  
+  /* Indigo / Ungu Terang */
+  --primary: hsl(249, 81%, 71%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  
+  /* Priorities */
+  --priority-high: hsl(13, 100%, 72%);
+  --priority-medium: hsl(39, 100%, 69%);
+  --priority-low: hsl(162, 55%, 55%);
+  
+  --muted: hsl(230, 20%, 85%);
+  --muted-foreground: hsl(230, 20%, 40%);
+  
+  --accent: hsl(230, 40%, 90%);
+  --accent-foreground: hsl(230, 30%, 20%);
+  
+  --destructive: hsl(13, 100%, 72%);
+  --border: hsl(230, 20%, 85%);
+  --input: hsl(230, 20%, 85%);
+  --ring: hsl(249, 81%, 71%);
+  
+  --radius: 1.5rem;
+
+  /* Clay Shadows (Light Mode) */
+  --clay-shadow-light: rgba(255, 255, 255, 0.8);
+  --clay-shadow-dark: rgba(180, 190, 210, 0.5);
+}
+
+.dark {
+  /* Dark Lavender */
+  --background: hsl(230, 30%, 15%);
+  --foreground: hsl(230, 40%, 95%);
+  
+  --primary: hsl(249, 81%, 65%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  
+  --priority-high: hsl(13, 90%, 65%);
+  --priority-medium: hsl(39, 90%, 60%);
+  --priority-low: hsl(162, 55%, 45%);
+  
+  --muted: hsl(230, 20%, 25%);
+  --muted-foreground: hsl(230, 20%, 70%);
+  
+  --accent: hsl(230, 30%, 25%);
+  --accent-foreground: hsl(230, 40%, 95%);
+  
+  --destructive: hsl(13, 90%, 65%);
+  --border: hsl(230, 20%, 25%);
+  --input: hsl(230, 20%, 25%);
+  --ring: hsl(249, 81%, 65%);
+
+  /* Clay Shadows (Dark Mode) */
+  --clay-shadow-light: rgba(255, 255, 255, 0.1);
+  --clay-shadow-dark: rgba(0, 0, 0, 0.4);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}

@@ -1,4 +1,4 @@
-# Quality Assurance & Testing Strategy (Project OUTBREAK)
+# Quality Assurance & Testing Strategy (Project BesokAja)
 
 Demi mempertahankan keandalan tinggi (99.9% uptime) dengan jumlah SDM yang terbatas (1 *Developer*), pengujian terotomatisasi merupakan sebuah keharusan. Dokumentasi ini memuat pedoman pengujian (testing) dari berbagai level (Unit, Integrasi, End-to-End, dan Keamanan).
 

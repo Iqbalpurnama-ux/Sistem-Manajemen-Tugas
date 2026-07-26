@@ -1,6 +1,6 @@
 # Changelog (Version History)
 
-Seluruh perubahan penting pada proyek OUTBREAK (*Sistem Informasi Manajemen Tugas Terintegrasi Berbasis Web*) akan dicatat dalam format dokumen ini. Penomoran rilis mengacu pada skema *Semantic Versioning (SemVer)* (`MAJOR.MINOR.PATCH`).
+Seluruh perubahan penting pada proyek BesokAja (*Sistem Informasi Manajemen Tugas Terintegrasi Berbasis Web*) akan dicatat dalam format dokumen ini. Penomoran rilis mengacu pada skema *Semantic Versioning (SemVer)* (`MAJOR.MINOR.PATCH`).
 
 ## [Unreleased] - (MVP Development Phase)
 

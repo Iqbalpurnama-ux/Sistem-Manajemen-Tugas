@@ -1,4 +1,4 @@
-# API & Server Actions (Project OUTBREAK)
+# API & Server Actions (Project BesokAja)
 
 Berhubung sistem dibangun menggunakan Next.js App Router (>= v14), kita mengurangi penggunaan API Routes (endpoint berbasis `/api/v1/xyz`) secara signifikan. Sebagian besar mutasi data di-*handle* melalui **Server Actions** Next.js, sementara Supabase secara inheren melayani pembacaan data langsung (PostgREST API) secara efisien dan aman. 
 
@@ -55,7 +55,7 @@ Karena Notifikasi berjalan secara otomatis (*headless*), komponen ini dipisah me
       POST https://api.resend.com/emails
       Body: {
          to: user.email,
-         subject: "[OUTBREAK Reminder] - Tugas Mendekati Deadline: " + task.title,
+         subject: "[BesokAja Reminder] - Tugas Mendekati Deadline: " + task.title,
          html: "<p>Jangan lupa mengerjakan tugas ini...</p>"
       }
    d. Jika Resend sukses, INSERT record ke 'notifications_log' ('H-1', 'email', 'sent', NOW())

@@ -1,6 +1,6 @@
 # Glossary (Daftar Istilah)
 
-Daftar istilah dan akronim teknis yang digunakan dalam dokumentasi Project OUTBREAK. Ditujukan untuk mempermudah anggota tim non-teknis, QA, atau pemangku kepentingan (stakeholder) memahami isi dokumen.
+Daftar istilah dan akronim teknis yang digunakan dalam dokumentasi Project BesokAja. Ditujukan untuk mempermudah anggota tim non-teknis, QA, atau pemangku kepentingan (stakeholder) memahami isi dokumen.
 
 | Istilah | Definisi / Penjelasan |
 |---|---|

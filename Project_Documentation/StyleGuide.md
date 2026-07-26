@@ -1,4 +1,4 @@
-# Style Guide & Design System (Project OUTBREAK)
+# Style Guide & Design System (Project BesokAja)
 
 Antarmuka aplikasi dibangun dengan tema **Claymorphism**. Gaya ini menonjolkan elemen UI yang tampak seperti terbuat dari tanah liat (clay): menonjol dari layar (*extruded*), sudut yang membulat (rounded), tebal, dan memberikan pengalaman visual yang hangat, taktil, serta empuk.
 

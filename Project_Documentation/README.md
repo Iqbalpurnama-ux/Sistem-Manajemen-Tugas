@@ -1,7 +1,7 @@
-# Project OUTBREAK: Sistem Informasi Manajemen Tugas Terintegrasi Berbasis Web
+# Project BesokAja: Sistem Informasi Manajemen Tugas Terintegrasi Berbasis Web
 
 ## Ringkasan Project
-Project OUTBREAK adalah aplikasi manajemen tugas berbasis web yang dirancang khusus untuk memenuhi kebutuhan produktivitas personal tingkat tinggi. Sistem ini menggabungkan manajemen tugas tradisional dengan integrasi *cloud storage* (Supabase Storage) dan notifikasi cerdas otomatis. Dibangun dengan pendekatan *Serverless First*, aplikasi ini sangat *scalable*, aman, dan siap untuk berevolusi menjadi produk SaaS (Software as a Service) skala besar (Enterprise Ready).
+Project BesokAja adalah aplikasi manajemen tugas berbasis web yang dirancang khusus untuk memenuhi kebutuhan produktivitas personal tingkat tinggi. Sistem ini menggabungkan manajemen tugas tradisional dengan integrasi *cloud storage* (Supabase Storage) dan notifikasi cerdas otomatis. Dibangun dengan pendekatan *Serverless First*, aplikasi ini sangat *scalable*, aman, dan siap untuk berevolusi menjadi produk SaaS (Software as a Service) skala besar (Enterprise Ready).
 
 ## Stack Teknologi
 - **Framework Frontend/Backend:** Next.js (App Router)
@@ -41,7 +41,7 @@ Project OUTBREAK adalah aplikasi manajemen tugas berbasis web yang dirancang khu
 1. **Clone repository & Install dependencies:**
    ```bash
    git clone <repo_url>
-   cd outbreak
+   cd besokaja
    npm install
    ```
 2. **Setup Environment Variables:**

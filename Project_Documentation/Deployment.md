@@ -7,7 +7,7 @@ Aplikasi menggunakan tiga tingkatan lingkungan (*environment*), masing-masing di
 
 - **Development:** *Localhost* (Komputer Developer). Terhubung ke *Supabase Local* atau basis data dev.
 - **Preview (Staging):** Dihasilkan secara otomatis oleh Vercel (Auto-URL) saat terjadi Git *Pull Request* atau *Push* ke branch selain `main`. Sangat aman untuk uji coba QA sebelum digabung (*merge*).
-- **Production:** Terhubung ke *Custom Domain* (misal: `app.outbreak.com`). Menggunakan Database Supabase Produksi dengan data ril.
+- **Production:** Terhubung ke *Custom Domain* (misal: `app.besokaja.com`). Menggunakan Database Supabase Produksi dengan data ril.
 
 ### Daftar Environment Variables yang Wajib Ada di Vercel:
 ```text
@@ -20,14 +20,14 @@ SUPABASE_SERVICE_ROLE_KEY=[YOUR_SECRET_KEY]
 
 # --- RESEND CONFIG ---
 RESEND_API_KEY=re_[YOUR_RESEND_KEY]
-NEXT_PUBLIC_APP_URL=https://app.outbreak.com
+NEXT_PUBLIC_APP_URL=https://app.besokaja.com
 ```
 
 ## 2. CI/CD & Deployment Flow
 1. Developer commit ke *branch* `feature/task-ui`.
 2. Push ke GitHub. Vercel webhook mendeteksi perubahan dan membangun **Preview Deployment**.
 3. Sistem secara otomatis menjalankan *Build Script* (`npm run build`). Jika terdapat kesalahan TypeScript atau peringatan ESLint (Zod/Props mismatch), *build* akan digagalkan (**Fail-Safe**).
-4. Jika sukses, Vercel memberikan tautan unik (contoh: `outbreak-ui-hsh234.vercel.app`) untuk diuji oleh tim QA / Diri sendiri.
+4. Jika sukses, Vercel memberikan tautan unik (contoh: `besokaja-ui-hsh234.vercel.app`) untuk diuji oleh tim QA / Diri sendiri.
 5. Developer melakukan *Merge* Pull Request ke *branch* `main`.
 6. Vercel secara otomatis membangun *Production Deployment* (Zero downtime). Pengguna akhir akan mendapatkan pembaruan seketika (*Instant Rollout*).
 

@@ -1,6 +1,6 @@
 <div align="center">
   <img src="https://img.icons8.com/color/96/000000/task--v1.png" alt="Logo" width="80" height="80">
-  <h1 align="center">Project OUTBREAK</h1>
+  <h1 align="center">Project BesokAja</h1>
   <p align="center">
     <strong>Sistem Informasi Manajemen Tugas Terintegrasi Berbasis Web</strong>
     <br />
@@ -16,7 +16,7 @@
 </p>
 
 ## 🌟 Latar Belakang & Deskripsi
-**Project OUTBREAK** adalah Sistem Informasi Manajemen Tugas yang dirancang untuk mengatasi tantangan dalam pengorganisasian tugas, manajemen *deadline*, dan penyimpanan dokumen akademik/pekerjaan secara terpusat. 
+**Project BesokAja** adalah Sistem Informasi Manajemen Tugas yang dirancang untuk mengatasi tantangan dalam pengorganisasian tugas, manajemen *deadline*, dan penyimpanan dokumen akademik/pekerjaan secara terpusat. 
 
 Berbeda dengan aplikasi *to-do list* konvensional, sistem ini mengimplementasikan pendekatan berbasis *cloud* terstruktur dengan nilai jual utama: **Otomatisasi pengingat tugas** dan **Manajemen berkas terintegrasi**. Dibungkus dalam antarmuka UI/UX modern bertema **Claymorphism**.
 

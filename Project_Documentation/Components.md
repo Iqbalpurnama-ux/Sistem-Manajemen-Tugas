@@ -1,4 +1,4 @@
-# UI Components Library (Project OUTBREAK)
+# UI Components Library (Project BesokAja)
 
 Aplikasi dibangun di atas pondasi `shadcn/ui` (Radix UI + TailwindCSS) yang telah dimodifikasi (overridden) agar sesuai dengan desain **Claymorphism**. Pendekatan *headless UI* ini memastikan bahwa meskipun tampilannya kustom (bulat dan membal), elemen tetap memiliki standar aksesibilitas web (WAI-ARIA) yang sempurna.
 

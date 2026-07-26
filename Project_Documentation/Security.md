@@ -1,10 +1,10 @@
-# Security Architecture (Project OUTBREAK)
+# Security Architecture (Project BesokAja)
 
 Keamanan aplikasi (terutama yang menangani berkas milik pengguna dan tenggat waktu produktivitas) adalah prioritas mutlak. Dokumen ini merangkum postur keamanan sistem berdasarkan standar OWASP Top 10 dan implementasi pengamanan secara terperinci.
 
 ## 1. Analisis Berdasarkan OWASP Top 10
 
-| Risiko OWASP | Solusi & Mitigasi di Project OUTBREAK |
+| Risiko OWASP | Solusi & Mitigasi di Project BesokAja |
 |---|---|
 | **A01: Broken Access Control** | Diatasi dengan PostgreSQL Row Level Security (RLS) di Supabase. Sebuah query (meskipun dieksekusi tanpa filter *where clause* dari *client*) akan digagalkan oleh DB jika token pengguna tidak memiliki *ownership* terhadap row tersebut. |
 | **A02: Cryptographic Failures** | Data transit dienkripsi via **HTTPS (TLS 1.2/1.3)** di Vercel. Password (Hash/Salt) dikelola sepenuhnya oleh Supabase Auth via `pgcrypto` sehingga kita tidak menyimpan *password plaintext*. |

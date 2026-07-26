@@ -1,4 +1,4 @@
-# Product Vision & Strategy (Project OUTBREAK)
+# Product Vision & Strategy (Project BesokAja)
 
 ## Vision
 Menjadi standar baru (Gold Standard) dalam manajemen produktivitas personal tingkat tinggi yang menyatukan manajemen tugas, pengarsipan berkas terpusat, dan kecerdasan pengingat (smart reminder) dalam satu ekosistem *serverless* yang aman dan elegan.

@@ -1,4 +1,4 @@
-# Architecture Decision Records (ADRs) - Project OUTBREAK
+# Architecture Decision Records (ADRs) - Project BesokAja
 
 Dokumen ini mencatat semua keputusan teknis besar (Architectural Decisions) yang diambil selama perancangan dan pengembangan aplikasi. Tujuannya adalah agar *developer* di masa depan memahami "Mengapa" suatu teknologi atau pola dipilih.
 

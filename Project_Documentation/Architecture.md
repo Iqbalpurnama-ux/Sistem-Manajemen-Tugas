@@ -1,8 +1,8 @@
-# Software Architecture (Project OUTBREAK)
+# Software Architecture (Project BesokAja)
 
 ## 1. High Level Architecture
 
-Project OUTBREAK mengadopsi arsitektur *Serverless*, yang berarti tidak ada server konvensional (VPS) yang perlu dikelola secara konstan. Semua beban komputasi didistribusikan ke Vercel (Frontend & Serverless Functions) dan Supabase (Database, Auth, Storage, Edge Functions).
+Project BesokAja mengadopsi arsitektur *Serverless*, yang berarti tidak ada server konvensional (VPS) yang perlu dikelola secara konstan. Semua beban komputasi didistribusikan ke Vercel (Frontend & Serverless Functions) dan Supabase (Database, Auth, Storage, Edge Functions).
 
 ```mermaid
 graph TD

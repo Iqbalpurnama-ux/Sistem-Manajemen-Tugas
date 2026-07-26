@@ -1,4 +1,4 @@
-# Database Architecture & Skema (Project OUTBREAK)
+# Database Architecture & Skema (Project BesokAja)
 
 Sistem menggunakan PostgreSQL (disediakan oleh Supabase) yang memungkinkan relasi antar-entitas secara terstruktur (ACID compliant). Semua tabel dikonfigurasi dengan fitur *Row Level Security (RLS)*. 
 
