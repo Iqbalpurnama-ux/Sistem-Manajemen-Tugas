@@ -4,113 +4,118 @@
 
 @custom-variant dark (&:is(.dark *));
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
-  
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  
-  --color-priority-high: var(--priority-high);
-  --color-priority-medium: var(--priority-medium);
-  --color-priority-low: var(--priority-low);
-
-  --color-destructive: var(--destructive);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-
-  /* Claymorphism Shadows */
-  --shadow-clay: 8px 8px 16px var(--clay-shadow-dark), -8px -8px 16px var(--clay-shadow-light);
-  --shadow-clay-inset: inset 6px 6px 12px var(--clay-shadow-dark), inset -6px -6px 12px var(--clay-shadow-light);
-  --shadow-clay-modal: 12px 12px 24px rgba(130, 140, 160, 0.4), -12px -12px 24px rgba(255, 255, 255, 0.9);
-
-  /* Claymorphism Radius */
-  --radius-clay: 1.5rem;
-  --radius-clay-lg: 2rem;
-  
-  /* Standard Radius mapped to clay */
-  --radius-sm: 0.75rem;
-  --radius-md: 1rem;
-  --radius-lg: 1.5rem;
-  --radius-xl: 2rem;
-  --radius-2xl: 2.5rem;
-}
-
 :root {
-  /* Pastel Light Lavender */
-  --background: hsl(230, 40%, 95%);
-  --foreground: hsl(230, 30%, 20%);
-  
-  /* Indigo / Ungu Terang */
-  --primary: hsl(249, 81%, 71%);
-  --primary-foreground: hsl(0, 0%, 100%);
-  
-  /* Priorities */
-  --priority-high: hsl(13, 100%, 72%);
-  --priority-medium: hsl(39, 100%, 69%);
-  --priority-low: hsl(162, 55%, 55%);
-  
-  --muted: hsl(230, 20%, 85%);
-  --muted-foreground: hsl(230, 20%, 40%);
-  
-  --accent: hsl(230, 40%, 90%);
-  --accent-foreground: hsl(230, 30%, 20%);
-  
-  --destructive: hsl(13, 100%, 72%);
-  --border: hsl(230, 20%, 85%);
-  --input: hsl(230, 20%, 85%);
-  --ring: hsl(249, 81%, 71%);
-  
-  --radius: 1.5rem;
+  /* ---- Palette: Blossom (pink hero) + Sage (mint complement) + Marigold (warm accent) ---- */
+  --bg-1:#FDEDF3;
+  --bg-2:#FBE8F6;
+  --clay:#FFF6F9;
+  --clay-raised:#FFFAFC;
+  --shadow-dark:rgba(214,110,150,0.28);
+  --shadow-light:rgba(255,255,255,0.95);
 
-  /* Clay Shadows (Light Mode) */
-  --clay-shadow-light: rgba(255, 255, 255, 0.8);
-  --clay-shadow-dark: rgba(180, 190, 210, 0.5);
-}
+  --blossom:#E8447F;
+  --blossom-dark:#C22C63;
+  --blossom-soft:#FFE0EC;
 
-.dark {
-  /* Dark Lavender */
-  --background: hsl(230, 30%, 15%);
-  --foreground: hsl(230, 40%, 95%);
-  
-  --primary: hsl(249, 81%, 65%);
-  --primary-foreground: hsl(0, 0%, 100%);
-  
-  --priority-high: hsl(13, 90%, 65%);
-  --priority-medium: hsl(39, 90%, 60%);
-  --priority-low: hsl(162, 55%, 45%);
-  
-  --muted: hsl(230, 20%, 25%);
-  --muted-foreground: hsl(230, 20%, 70%);
-  
-  --accent: hsl(230, 30%, 25%);
-  --accent-foreground: hsl(230, 40%, 95%);
-  
-  --destructive: hsl(13, 90%, 65%);
-  --border: hsl(230, 20%, 25%);
-  --input: hsl(230, 20%, 25%);
-  --ring: hsl(249, 81%, 65%);
+  --sage:#3FAE86;
+  --sage-soft:#DEF7ED;
 
-  /* Clay Shadows (Dark Mode) */
-  --clay-shadow-light: rgba(255, 255, 255, 0.1);
-  --clay-shadow-dark: rgba(0, 0, 0, 0.4);
+  --marigold:#E8A33D;
+  --marigold-soft:#FDEDD2;
+
+  --lilac:#9B7FE0;
+  --lilac-soft:#EDE6FC;
+
+  --ink:#3D2436;
+  --ink-soft:#8A6B79;
+  --ink-faint:#C3A9B5;
+  --white:#FFFDFE;
+
+  --r-lg:28px;
+  --r-md:20px;
+  --r-sm:14px;
+
+  /* Tailwind Mappings */
+  --background: var(--bg-1);
+  --foreground: var(--ink);
+  --primary: var(--blossom);
+  --primary-foreground: var(--white);
+  --card: var(--clay);
+  --card-foreground: var(--ink);
+  --muted: var(--blossom-soft);
+  --muted-foreground: var(--ink-soft);
+  --border: var(--ink-faint);
+  --input: var(--clay-raised);
+  --ring: var(--blossom);
+  --destructive: var(--blossom-dark);
+  --radius: var(--r-md);
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
   body {
-    @apply bg-background text-foreground;
+    background: linear-gradient(160deg, var(--bg-1) 0%, var(--bg-2) 100%);
+    color: var(--ink);
+    min-height: 100vh;
+    overflow-x: hidden;
   }
-  html {
-    @apply font-sans;
+}
+
+@layer components {
+  /* ---------- Signature: soft clay blobs drifting behind content ---------- */
+  .blob { position:fixed; border-radius:50%; filter: blur(2px); opacity:0.5; z-index:0; pointer-events:none; }
+  .blob-1 { width:340px; height:340px; top:-120px; right:-100px; background: radial-gradient(circle at 30% 30%, var(--blossom-soft), transparent 70%); }
+  .blob-2 { width:260px; height:260px; bottom:-80px; left:-60px; background: radial-gradient(circle at 60% 40%, var(--sage-soft), transparent 70%); }
+  .blob-3 { width:200px; height:200px; top:40%; right:6%; background: radial-gradient(circle at 50% 50%, var(--marigold-soft), transparent 70%); opacity:0.35; }
+
+  /* ---------- Clay shadow mixins ---------- */
+  .clay {
+    background: var(--clay);
+    border-radius: var(--r-lg);
+    box-shadow: 9px 9px 20px var(--shadow-dark), -9px -9px 18px var(--shadow-light);
+    position: relative; z-index: 1;
+  }
+  .clay-sm {
+    background: var(--clay-raised);
+    border-radius: var(--r-md);
+    box-shadow: 6px 6px 14px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+    position: relative; z-index: 1;
+  }
+  .clay-tight {
+    box-shadow: 4px 4px 9px var(--shadow-dark), -4px -4px 9px var(--shadow-light);
+  }
+
+  /* ---------- Layout ---------- */
+  .app-layout {
+    width: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 24px;
+    position: relative; z-index: 1;
+  }
+  @media (max-width: 880px){
+    .app-layout { grid-template-columns: 1fr; }
+  }
+
+  /* Badge */
+  .badge { font-size:11px; font-weight:700; padding:4px 11px; border-radius:20px; }
+  .badge-high { background: var(--blossom-soft); color: var(--blossom-dark); }
+  .badge-mid { background: var(--marigold-soft); color: #8A5C13; }
+  .badge-low { background: var(--lilac-soft); color: #5C3FA6; }
+  .badge-done { background: var(--sage-soft); color: #1F7A56; }
+
+  /* Custom Date Input Icon */
+  .css-date-input::-webkit-calendar-picker-indicator {
+    background: transparent;
+    color: transparent;
+    cursor: pointer;
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 48px;
+    height: 48px;
+    z-index: 10;
   }
 }

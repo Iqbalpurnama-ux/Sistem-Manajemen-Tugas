@@ -16,7 +16,7 @@
 </p>
 
 ## 🌟 Latar Belakang & Deskripsi
-**Project BesokAja** adalah Sistem Informasi Manajemen Tugas yang dirancang untuk mengatasi tantangan dalam pengorganisasian tugas, manajemen *deadline*, dan penyimpanan dokumen akademik/pekerjaan secara terpusat. 
+**BesokAja** adalah Sistem Informasi Manajemen Tugas yang dirancang untuk mengatasi tantangan dalam pengorganisasian tugas, manajemen *deadline*, dan penyimpanan dokumen akademik/pekerjaan secara terpusat. 
 
 Berbeda dengan aplikasi *to-do list* konvensional, sistem ini mengimplementasikan pendekatan berbasis *cloud* terstruktur dengan nilai jual utama: **Otomatisasi pengingat tugas** dan **Manajemen berkas terintegrasi**. Dibungkus dalam antarmuka UI/UX modern bertema **Claymorphism**.
 

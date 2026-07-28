@@ -1,0 +1,135 @@
+'use client'
+
+import React, { useState } from 'react'
+import { TaskCard, TaskWithCategory } from './task-card'
+import { TaskForm } from './task-form'
+import { Bell, Inbox, Plus } from 'lucide-react'
+
+interface TaskListProps {
+  tasks: TaskWithCategory[]
+}
+
+export function TaskList({ tasks }: TaskListProps) {
+  const [isFormOpen, setIsFormOpen] = useState(false)
+
+  const [filter, setFilter] = useState<'Semua' | 'To-Do' | 'Done'>('Semua')
+
+  const toDos = tasks.filter(t => t.status === 'To-Do')
+  const done = tasks.filter(t => t.status === 'Done')
+
+  const filteredTasks = tasks.filter(task => {
+    if (filter === 'Semua') return true
+    return task.status === filter
+  })
+
+  return (
+    <>
+      <div className="flex items-center gap-[18px] p-[20px_28px] bg-gradient-to-r from-[var(--blossom-soft)] to-[var(--lilac-soft)] rounded-[var(--r-lg)] relative z-[1]" style={{ boxShadow: '6px 6px 14px var(--shadow-dark), -6px -6px 14px var(--shadow-light)' }}>
+        <div className="w-[52px] h-[52px] rounded-[16px] shrink-0 bg-gradient-to-br from-[#F1699C] to-[var(--blossom)] flex items-center justify-center text-white" style={{ boxShadow: '3px 3px 8px var(--shadow-dark), -3px -3px 8px var(--shadow-light)' }}>
+          <Bell size={24} strokeWidth={2.5} />
+        </div>
+        <div>
+          <b className="block text-[15px] font-[700] text-[var(--ink)]">Tugas Menunggu</b>
+          <span className="text-[13px] text-[var(--ink-soft)] font-[600]">Kamu punya {toDos.length} tugas yang belum selesai hari ini.</span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-[24px]">
+        <div className="p-[26px] flex items-center gap-[20px] clay">
+          <div className="w-[72px] h-[72px] rounded-full shrink-0 flex items-center justify-center relative" style={{
+            background: `conic-gradient(var(--blossom) 100%, rgba(61,36,54,0.08) 0)`,
+            boxShadow: '4px 4px 10px var(--shadow-dark), -4px -4px 10px var(--shadow-light)'
+          }}>
+            <div className="absolute inset-[8px] rounded-full bg-[var(--clay)]" style={{ boxShadow: 'inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light)' }}></div>
+            <span className="relative z-[1] font-heading font-[700] text-[15px] text-[var(--ink)]">100%</span>
+          </div>
+          <div>
+            <div className="text-[28px] font-[700] font-heading leading-none text-[var(--ink)]">{tasks.length}</div>
+            <div className="text-[13px] text-[var(--ink-soft)] font-[600] mt-[4px]">Total Tugas</div>
+          </div>
+        </div>
+        <div className="p-[26px] flex items-center gap-[20px] clay">
+          <div className="w-[72px] h-[72px] rounded-full shrink-0 flex items-center justify-center relative" style={{
+            background: `conic-gradient(var(--sage) ${tasks.length > 0 ? Math.round((done.length / tasks.length) * 100) : 0}%, rgba(61,36,54,0.08) 0)`,
+            boxShadow: '4px 4px 10px var(--shadow-dark), -4px -4px 10px var(--shadow-light)'
+          }}>
+            <div className="absolute inset-[8px] rounded-full bg-[var(--clay)]" style={{ boxShadow: 'inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light)' }}></div>
+            <span className="relative z-[1] font-heading font-[700] text-[15px] text-[var(--ink)]">{tasks.length > 0 ? Math.round((done.length / tasks.length) * 100) : 0}%</span>
+          </div>
+          <div>
+            <div className="text-[28px] font-[700] font-heading leading-none text-[var(--ink)]">{done.length}</div>
+            <div className="text-[13px] text-[var(--ink-soft)] font-[600] mt-[4px]">Selesai</div>
+          </div>
+        </div>
+        <div className="p-[26px] flex items-center gap-[20px] clay">
+          <div className="w-[72px] h-[72px] rounded-full shrink-0 flex items-center justify-center relative" style={{
+            background: `conic-gradient(var(--marigold) ${toDos.length > 0 ? Math.round((tasks.filter(t => t.priority === 'High' && t.status === 'To-Do').length / toDos.length) * 100) : 0}%, rgba(61,36,54,0.08) 0)`,
+            boxShadow: '4px 4px 10px var(--shadow-dark), -4px -4px 10px var(--shadow-light)'
+          }}>
+            <div className="absolute inset-[8px] rounded-full bg-[var(--clay)]" style={{ boxShadow: 'inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light)' }}></div>
+            <span className="relative z-[1] font-heading font-[700] text-[15px] text-[var(--ink)]">{toDos.length > 0 ? Math.round((tasks.filter(t => t.priority === 'High' && t.status === 'To-Do').length / toDos.length) * 100) : 0}%</span>
+          </div>
+          <div>
+            <div className="text-[28px] font-[700] font-heading leading-none text-[var(--ink)]">{tasks.filter(t => t.priority === 'High' && t.status === 'To-Do').length}</div>
+            <div className="text-[13px] text-[var(--ink-soft)] font-[600] mt-[4px]">Prioritas Tinggi</div>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex items-center justify-between p-[8px_8px_0]">
+        <h2 className="text-[20px] font-[700] font-heading text-[var(--ink)]">Tugas Anda</h2>
+        <div className="flex gap-[10px]">
+          <div 
+            onClick={() => setFilter('Semua')}
+            className={`text-[13px] font-[700] p-[8px_16px] rounded-[20px] cursor-pointer transition-all ${filter === 'Semua' ? 'text-white bg-gradient-to-br from-[#F1699C] to-[var(--blossom)] shadow-[3px_3px_8px_var(--shadow-dark),-3px_-3px_8px_var(--shadow-light)]' : 'text-[var(--ink-soft)] hover:bg-white/50'}`}
+          >
+            Semua
+          </div>
+          <div 
+            onClick={() => setFilter('To-Do')}
+            className={`text-[13px] font-[700] p-[8px_16px] rounded-[20px] cursor-pointer transition-all ${filter === 'To-Do' ? 'text-white bg-gradient-to-br from-[#F1699C] to-[var(--blossom)] shadow-[3px_3px_8px_var(--shadow-dark),-3px_-3px_8px_var(--shadow-light)]' : 'text-[var(--ink-soft)] hover:bg-white/50'}`}
+          >
+            Berjalan
+          </div>
+          <div 
+            onClick={() => setFilter('Done')}
+            className={`text-[13px] font-[700] p-[8px_16px] rounded-[20px] cursor-pointer transition-all ${filter === 'Done' ? 'text-white bg-gradient-to-br from-[#F1699C] to-[var(--blossom)] shadow-[3px_3px_8px_var(--shadow-dark),-3px_-3px_8px_var(--shadow-light)]' : 'text-[var(--ink-soft)] hover:bg-white/50'}`}
+          >
+            Selesai
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-[20px]">
+        {filteredTasks.length === 0 ? (
+          <div className="p-12 text-center clay flex flex-col items-center justify-center gap-4">
+             <div className="w-[80px] h-[80px] rounded-full bg-gradient-to-br from-[#F1699C]/20 to-[var(--blossom)]/20 flex items-center justify-center text-[var(--blossom-dark)] mb-2" style={{ boxShadow: 'inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light)' }}>
+               <Inbox size={32} strokeWidth={2.5} />
+             </div>
+             <p className="font-heading font-bold text-xl text-[var(--ink)]">Belum ada tugas</p>
+             <p className="text-sm font-[500] text-[var(--ink-soft)] max-w-[250px] leading-relaxed">
+               {filter === 'Semua' ? 'Kanvas kosong! Mulai bangun produktivitas Anda dengan menambah tugas baru.' : 
+                filter === 'To-Do' ? 'Bagus! Semua tugas sudah Anda selesaikan.' : 
+                'Belum ada tugas yang selesai. Ayo kerjakan!'}
+             </p>
+          </div>
+        ) : (
+          filteredTasks.map(task => (
+            <TaskCard key={task.id} task={task} />
+          ))
+        )}
+      </div>
+
+      {/* FAB (Floating Action Button) */}
+      <button 
+        onClick={() => setIsFormOpen(true)}
+        className="fixed right-[40px] bottom-[40px] w-[64px] h-[64px] rounded-[22px] bg-gradient-to-br from-[#F1699C] to-[var(--blossom)] flex items-center justify-center text-white cursor-pointer z-[20] transition-transform active:scale-95 hover:-translate-y-1"
+        style={{ boxShadow: '8px 8px 18px var(--shadow-dark), -8px -8px 16px var(--shadow-light), inset 2px 2px 4px rgba(255,255,255,0.4)' }}
+      >
+        <Plus size={32} strokeWidth={2.5} />
+      </button>
+
+      {isFormOpen && <TaskForm onClose={() => setIsFormOpen(false)} />}
+    </>
+  )
+}

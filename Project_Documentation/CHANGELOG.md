@@ -7,6 +7,9 @@ Seluruh perubahan penting pada proyek BesokAja (*Sistem Informasi Manajemen Tuga
 *(Bagian ini berisi rancangan yang sedang diusahakan sebelum peluncuran resmi ke publik).*
 
 ### Added (Penambahan)
+- **Tiga Pilar Dasbor (Kalender, Analitik, Profil):** Mengimplementasikan tampilan Agenda Vertikal (Kalender) yang dikelompokkan per hari, Dasbor Analitik *real-time* (Progress Bar, Prioritas, Kategori), serta Halaman Profil yang memuat integrasi *Logout*.
+- **Penyempurnaan UX (Sprint 3 Akhir):** Melengkapi fitur Edit Tugas (memuat ulang *form* dengan data awal), memoles tampilan *sidebar* ganda, memperbaiki *bug Middleware* rute luring (*offline routing*), serta menyempurnakan palet warna *Claymorphism*.
+- **Manajemen Tugas Inti (Sprint 3):** Implementasi *Dashboard* responsif dengan *TaskCard* interaktif (Checkbox status Optimistic, Hapus tugas), form pembuatan tugas dengan *Zod Validation*, dan integrasi langsung ke Server Actions Supabase.
 - **Dokumentasi Utama:** Menyelesaikan pembuatan dokumentasi *CTO-Level* (PRD, Arsitektur, Skema DB, Style Guide, Risiko).
 - **Core Stack:** Menetapkan inisialisasi tumpukan teknologi Next.js App Router, Tailwind, dan shadcn/ui.
 - **Supabase Integration:** Merancang skema PostgreSQL dengan arsitektur relasional `tasks`, `attachments`, `labels`.
