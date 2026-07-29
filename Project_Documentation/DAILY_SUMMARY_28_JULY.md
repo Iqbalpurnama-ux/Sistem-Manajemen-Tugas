@@ -46,3 +46,4 @@ Karena fondasi dan antarmuka tugas sudah mutlak sempurna, agenda kita besok adal
 3. Menyambungkan lampiran-lampiran ini ke kartu tugas masing-masing dan memastikan *Security Rules (RLS)* melindungi privasi berkas tersebut.
 
 > Selesai membaca? Mari kita tutup *laptop*, beristirahat sejenak, dan bersiap untuk meluncur ke fitur *Upload File* esok hari! 🌙
+p
