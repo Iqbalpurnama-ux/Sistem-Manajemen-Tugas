@@ -3,6 +3,8 @@
 import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
+import { rateLimit } from '@/lib/rate-limit'
+import { logger } from '@/lib/logger'
 
 const CreateTaskSchema = z.object({
   title: z.string().min(3, 'Judul tugas minimal 3 karakter').max(100, 'Judul terlalu panjang'),
@@ -39,10 +41,17 @@ export async function createTask(formData: FormData): Promise<TaskActionResponse
     // Self-healing: Pastikan profil user ada sebelum membuat relasi
     await supabase.from('profiles').upsert({
       id: user.id,
-      email: user.email,
+      email: user.email || '',
       full_name: user.user_metadata?.full_name,
       avatar_url: user.user_metadata?.avatar_url
     }, { onConflict: 'id' })
+
+    // Rate Limiting: Max 20 tasks per minute per user
+    const rateLimitRes = await rateLimit({ id: `create-task-${user.id}`, limit: 20, windowMs: 60000 })
+    if (!rateLimitRes.success) {
+      logger.warn('Rate limit exceeded for createTask', { userId: user.id })
+      return { success: false, error: 'Terlalu banyak permintaan. Silakan tunggu sebentar.' }
+    }
 
     const rawData = {
       title: formData.get('title'),
@@ -89,7 +98,7 @@ export async function createTask(formData: FormData): Promise<TaskActionResponse
       .single()
 
     if (error || !task) {
-      console.error('Create Task Error:', error?.message)
+      logger.error('Create Task Error', { error: error?.message })
       return { success: false, error: 'Gagal menyimpan tugas ke server.' }
     }
 
@@ -104,13 +113,13 @@ export async function createTask(formData: FormData): Promise<TaskActionResponse
           mime_type: attachmentData.mime_type,
           file_size: attachmentData.file_size
         })
-      if (attError) console.error('Create Attachment Error:', attError.message)
+      if (attError) logger.error('Create Attachment Error', { error: attError.message })
     }
 
     revalidatePath('/dashboard')
     return { success: true, message: 'Tugas berhasil ditambahkan' }
   } catch (err) {
-    console.error('Server Action Error:', err)
+    logger.error('Error creating task', { error: err })
     return { success: false, error: 'Terjadi kesalahan sistem internal.' }
   }
 }

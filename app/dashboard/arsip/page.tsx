@@ -30,6 +30,7 @@ export default async function ArsipPage() {
     .eq('user_id', user.id)
     .eq('is_archived', true)
     .order('created_at', { ascending: false })
+    .limit(100)
 
   if (fetchError) {
     console.error('Error fetching archived tasks:', fetchError.message)

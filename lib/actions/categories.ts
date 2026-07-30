@@ -2,11 +2,13 @@
 
 import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { rateLimit } from '@/lib/rate-limit'
+import { logger } from '@/lib/logger'
 
 export type Category = {
   id: string
   name: string
-  color: string
+  color: string | null
 }
 
 export async function getOrCreateCategory(categoryName: string): Promise<{ success: boolean; data?: Category; error?: string }> {
@@ -18,10 +20,16 @@ export async function getOrCreateCategory(categoryName: string): Promise<{ succe
     const name = categoryName.trim()
     if (!name) return { success: false, error: 'Nama kategori tidak boleh kosong' }
 
+    const rateLimitRes = await rateLimit({ id: `create-category-${user.id}`, limit: 10, windowMs: 60000 })
+    if (!rateLimitRes.success) {
+      logger.warn('Rate limit exceeded for getOrCreateCategory', { userId: user.id })
+      return { success: false, error: 'Terlalu banyak permintaan. Silakan tunggu sebentar.' }
+    }
+
     // Self-healing: Pastikan profil user ada di public.profiles sebelum membuat relasi
     await supabase.from('profiles').upsert({
       id: user.id,
-      email: user.email,
+      email: user.email || '',
       full_name: user.user_metadata?.full_name,
       avatar_url: user.user_metadata?.avatar_url
     }, { onConflict: 'id' })
@@ -56,7 +64,7 @@ export async function getOrCreateCategory(categoryName: string): Promise<{ succe
     revalidatePath('/dashboard')
     return { success: true, data: newCategory }
   } catch (err) {
-    console.error('Category Action Error:', err)
+    logger.error('Category Action Error', { userId: 'unknown', error: err })
     return { success: false, error: 'Gagal memproses kategori' }
   }
 }

@@ -1,9 +1,13 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { TaskCard, TaskWithCategory } from './task-card'
-import { TaskForm } from './task-form'
-import { Bell, Inbox, Plus, Layers } from 'lucide-react'
+import dynamic from 'next/dynamic'
+import { Bell, Inbox, Plus, Layers, Loader2 } from 'lucide-react'
+
+const TaskForm = dynamic(() => import('./task-form').then(mod => mod.TaskForm), {
+  loading: () => <div className="p-8 flex justify-center"><Loader2 className="animate-spin text-[var(--blossom)]" /></div>
+})
 
 interface TaskListProps {
   tasks: TaskWithCategory[]
@@ -11,6 +15,27 @@ interface TaskListProps {
 
 export function TaskList({ tasks }: TaskListProps) {
   const [isFormOpen, setIsFormOpen] = useState(false)
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't trigger if user is typing in an input or textarea
+      if (
+        e.target instanceof HTMLInputElement || 
+        e.target instanceof HTMLTextAreaElement || 
+        e.target instanceof HTMLSelectElement
+      ) {
+        return
+      }
+
+      if (e.key === 'n' || e.key === 'N') {
+        e.preventDefault()
+        setIsFormOpen(true)
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
 
   const [filter, setFilter] = useState<'Semua' | 'To-Do' | 'Done'>('Semua')
 
@@ -110,11 +135,22 @@ export function TaskList({ tasks }: TaskListProps) {
                <Inbox size={32} strokeWidth={2.5} />
              </div>
              <p className="font-heading font-bold text-xl text-[var(--ink)]">Belum ada tugas</p>
-             <p className="text-sm font-[500] text-[var(--ink-soft)] max-w-[250px] leading-relaxed">
+             <p className="text-sm font-[500] text-[var(--ink-soft)] max-w-[250px] leading-relaxed mb-2">
                {filter === 'Semua' ? 'Kanvas kosong! Mulai bangun produktivitas Anda dengan menambah tugas baru.' : 
                 filter === 'To-Do' ? 'Bagus! Semua tugas sudah Anda selesaikan.' : 
                 'Belum ada tugas yang selesai. Ayo kerjakan!'}
              </p>
+             {filter === 'Semua' && (
+               <button 
+                 onClick={() => setIsFormOpen(true)}
+                 className="flex items-center gap-2 px-5 py-2.5 rounded-full text-white font-bold text-sm bg-gradient-to-br from-[#F1699C] to-[var(--blossom)] hover:opacity-90 transition-opacity"
+                 style={{ boxShadow: '3px 3px 8px var(--shadow-dark), -3px -3px 8px var(--shadow-light)' }}
+               >
+                 <Plus size={18} strokeWidth={3} />
+                 <span>Buat Tugas Baru</span>
+                 <kbd className="hidden sm:inline-block ml-2 px-1.5 py-0.5 text-[10px] bg-white/20 rounded border border-white/30 text-white font-sans">N</kbd>
+               </button>
+             )}
           </div>
         ) : (
           filteredTasks.map(task => (

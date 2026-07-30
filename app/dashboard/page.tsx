@@ -52,7 +52,7 @@ export default async function DashboardPage({
     query = query.ilike('title', `%${searchQuery}%`)
   }
 
-  const { data: tasks, error: fetchError } = await query.order('created_at', { ascending: false })
+  const { data: tasks, error: fetchError } = await query.order('created_at', { ascending: false }).limit(100)
 
   if (fetchError) {
     console.error('Error fetching tasks:', fetchError.message)
