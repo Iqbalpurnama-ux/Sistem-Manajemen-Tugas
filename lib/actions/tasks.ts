@@ -9,14 +9,17 @@ const CreateTaskSchema = z.object({
   priority: z.enum(['Low', 'Medium', 'High']),
   deadline: z.string().optional(),
   category_id: z.string().uuid('Kategori tidak valid').optional().nullable(),
+  description: z.string().max(1000, 'Deskripsi terlalu panjang').optional().nullable(),
 })
 
 const AttachmentSchema = z.object({
-  file_name: z.string(),
+  file_name: z.string().max(255),
   storage_path: z.string(),
-  mime_type: z.string(),
-  file_size: z.number()
+  mime_type: z.string().regex(/^[\w\-]+\/[\w\-\+\.]+$/, 'Tipe file tidak valid'),
+  file_size: z.number().max(10 * 1024 * 1024, 'Ukuran file maks 10MB')
 })
+
+const UUID_SCHEMA = z.string().uuid('ID tidak valid')
 
 export type TaskActionResponse = {
   success: boolean
@@ -28,13 +31,12 @@ export async function createTask(formData: FormData): Promise<TaskActionResponse
   try {
     const supabase = await createClient()
     
-    // Auth Check
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
       return { success: false, error: 'Sesi Anda telah berakhir. Silakan login kembali.' }
     }
 
-    // Self-healing: Pastikan profil user ada di public.profiles sebelum membuat relasi
+    // Self-healing: Pastikan profil user ada sebelum membuat relasi
     await supabase.from('profiles').upsert({
       id: user.id,
       email: user.email,
@@ -42,21 +44,20 @@ export async function createTask(formData: FormData): Promise<TaskActionResponse
       avatar_url: user.user_metadata?.avatar_url
     }, { onConflict: 'id' })
 
-    // Parse Data
     const rawData = {
       title: formData.get('title'),
       priority: formData.get('priority') || 'Medium',
       deadline: formData.get('deadline') || undefined,
       category_id: formData.get('category_id') || undefined,
+      description: formData.get('description') || undefined,
     }
 
-    // Validasi Zod
     const validated = CreateTaskSchema.safeParse(rawData)
     if (!validated.success) {
       return { success: false, error: validated.error.issues[0].message }
     }
 
-    // Parse Attachment Data
+    // Parse & Validate Attachment Data (server-side)
     let attachmentData = null
     const attachmentStr = formData.get('attachment')
     if (attachmentStr && typeof attachmentStr === 'string') {
@@ -65,13 +66,14 @@ export async function createTask(formData: FormData): Promise<TaskActionResponse
         const validAttachment = AttachmentSchema.safeParse(parsed)
         if (validAttachment.success) {
           attachmentData = validAttachment.data
+        } else {
+          console.error("Invalid attachment data:", validAttachment.error)
         }
       } catch (e) {
         console.error("Failed to parse attachment", e)
       }
     }
 
-    // Insert ke Database
     const { data: task, error } = await supabase
       .from('tasks')
       .insert({
@@ -80,6 +82,7 @@ export async function createTask(formData: FormData): Promise<TaskActionResponse
         priority: validated.data.priority,
         deadline: validated.data.deadline || null,
         category_id: validated.data.category_id || null,
+        description: validated.data.description || null,
         status: 'To-Do'
       })
       .select()
@@ -104,9 +107,7 @@ export async function createTask(formData: FormData): Promise<TaskActionResponse
       if (attError) console.error('Create Attachment Error:', attError.message)
     }
 
-    // Refresh UI
     revalidatePath('/dashboard')
-    
     return { success: true, message: 'Tugas berhasil ditambahkan' }
   } catch (err) {
     console.error('Server Action Error:', err)
@@ -116,6 +117,12 @@ export async function createTask(formData: FormData): Promise<TaskActionResponse
 
 export async function editTask(taskId: string, formData: FormData): Promise<TaskActionResponse> {
   try {
+    // Validate taskId is a proper UUID
+    const idValidation = UUID_SCHEMA.safeParse(taskId)
+    if (!idValidation.success) {
+      return { success: false, error: 'ID tugas tidak valid' }
+    }
+
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { success: false, error: 'Sesi berakhir' }
@@ -125,12 +132,13 @@ export async function editTask(taskId: string, formData: FormData): Promise<Task
       priority: formData.get('priority') || 'Medium',
       deadline: formData.get('deadline') || undefined,
       category_id: formData.get('category_id') || undefined,
+      description: formData.get('description') || undefined,
     }
 
     const validated = CreateTaskSchema.safeParse(rawData)
     if (!validated.success) return { success: false, error: validated.error.issues[0].message }
 
-    // Parse Attachment Data
+    // Parse & Validate Attachment Data (server-side)
     let newAttachmentData = null
     const attachmentStr = formData.get('attachment')
     if (attachmentStr && typeof attachmentStr === 'string') {
@@ -150,24 +158,22 @@ export async function editTask(taskId: string, formData: FormData): Promise<Task
         priority: validated.data.priority,
         deadline: validated.data.deadline || null,
         category_id: validated.data.category_id || null,
+        description: validated.data.description || null,
       })
       .eq('id', taskId)
       .eq('user_id', user.id)
 
     if (error) return { success: false, error: 'Gagal mengubah tugas' }
 
-    // Handle Attachment Replacement or Deletion
     const removeAttachment = formData.get('remove_attachment') === 'true'
     
     if (newAttachmentData || removeAttachment) {
       const { data: existing } = await supabase.from('attachments').select('*').eq('task_id', taskId).single()
       
       if (existing) {
-        // Hapus file lama di storage
         await supabase.storage.from('task_attachments').remove([existing.storage_path])
         
         if (newAttachmentData) {
-          // Update database row
           await supabase.from('attachments').update({
             file_name: newAttachmentData.file_name,
             storage_path: newAttachmentData.storage_path,
@@ -175,11 +181,9 @@ export async function editTask(taskId: string, formData: FormData): Promise<Task
             file_size: newAttachmentData.file_size
           }).eq('id', existing.id)
         } else if (removeAttachment) {
-          // Hapus dari database
           await supabase.from('attachments').delete().eq('id', existing.id)
         }
       } else if (newAttachmentData) {
-        // Jika sebelumnya tidak ada attachment
         await supabase.from('attachments').insert({
           task_id: taskId,
           user_id: user.id,
@@ -201,8 +205,10 @@ export async function editTask(taskId: string, formData: FormData): Promise<Task
 
 export async function updateTaskStatus(taskId: string, newStatus: 'To-Do' | 'Done'): Promise<TaskActionResponse> {
   try {
+    const idValidation = UUID_SCHEMA.safeParse(taskId)
+    if (!idValidation.success) return { success: false, error: 'ID tidak valid' }
+
     const supabase = await createClient()
-    
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { success: false, error: 'Unauthorized' }
 
@@ -210,7 +216,7 @@ export async function updateTaskStatus(taskId: string, newStatus: 'To-Do' | 'Don
       .from('tasks')
       .update({ status: newStatus })
       .eq('id', taskId)
-      .eq('user_id', user.id) // Security check ekstra
+      .eq('user_id', user.id)
 
     if (error) throw error
 
@@ -223,19 +229,18 @@ export async function updateTaskStatus(taskId: string, newStatus: 'To-Do' | 'Don
 
 export async function deleteTask(taskId: string): Promise<TaskActionResponse> {
   try {
+    const idValidation = UUID_SCHEMA.safeParse(taskId)
+    if (!idValidation.success) return { success: false, error: 'ID tidak valid' }
+
     const supabase = await createClient()
-    
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { success: false, error: 'Unauthorized' }
 
-    // Hapus attachment dari storage jika ada
     const { data: existingAtt } = await supabase.from('attachments').select('*').eq('task_id', taskId).single()
     if (existingAtt) {
       await supabase.storage.from('task_attachments').remove([existingAtt.storage_path])
     }
 
-    // Untuk MVP kita pakai hard delete dulu sesuai request "penghapusan (Delete) tugas" di Tasks.md
-    // Cascade akan otomatis menghapus record di tabel attachments
     const { error } = await supabase
       .from('tasks')
       .delete()
@@ -245,6 +250,7 @@ export async function deleteTask(taskId: string): Promise<TaskActionResponse> {
     if (error) throw error
 
     revalidatePath('/dashboard')
+    revalidatePath('/dashboard/arsip')
     return { success: true, message: 'Tugas dihapus' }
   } catch (err) {
     return { success: false, error: 'Gagal menghapus tugas' }
@@ -253,6 +259,15 @@ export async function deleteTask(taskId: string): Promise<TaskActionResponse> {
 
 export async function saveAttachment(taskId: string, attachmentData: { file_name: string, storage_path: string, mime_type: string, file_size: number }): Promise<TaskActionResponse> {
   try {
+    const idValidation = UUID_SCHEMA.safeParse(taskId)
+    if (!idValidation.success) return { success: false, error: 'ID tidak valid' }
+
+    // Validate attachment data server-side
+    const validAttachment = AttachmentSchema.safeParse(attachmentData)
+    if (!validAttachment.success) {
+      return { success: false, error: validAttachment.error.issues[0].message }
+    }
+
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { success: false, error: 'Unauthorized' }
@@ -261,19 +276,19 @@ export async function saveAttachment(taskId: string, attachmentData: { file_name
     if (existing) {
       await supabase.storage.from('task_attachments').remove([existing.storage_path])
       await supabase.from('attachments').update({
-        file_name: attachmentData.file_name,
-        storage_path: attachmentData.storage_path,
-        mime_type: attachmentData.mime_type,
-        file_size: attachmentData.file_size
+        file_name: validAttachment.data.file_name,
+        storage_path: validAttachment.data.storage_path,
+        mime_type: validAttachment.data.mime_type,
+        file_size: validAttachment.data.file_size
       }).eq('id', existing.id)
     } else {
       await supabase.from('attachments').insert({
         task_id: taskId,
         user_id: user.id,
-        file_name: attachmentData.file_name,
-        storage_path: attachmentData.storage_path,
-        mime_type: attachmentData.mime_type,
-        file_size: attachmentData.file_size
+        file_name: validAttachment.data.file_name,
+        storage_path: validAttachment.data.storage_path,
+        mime_type: validAttachment.data.mime_type,
+        file_size: validAttachment.data.file_size
       })
     }
 
@@ -287,6 +302,9 @@ export async function saveAttachment(taskId: string, attachmentData: { file_name
 
 export async function toggleArchiveTask(taskId: string, isArchived: boolean): Promise<TaskActionResponse> {
   try {
+    const idValidation = UUID_SCHEMA.safeParse(taskId)
+    if (!idValidation.success) return { success: false, error: 'ID tidak valid' }
+
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { success: false, error: 'Unauthorized' }
@@ -300,6 +318,7 @@ export async function toggleArchiveTask(taskId: string, isArchived: boolean): Pr
     if (error) throw error
 
     revalidatePath('/dashboard')
+    revalidatePath('/dashboard/arsip')
     return { success: true, message: isArchived ? 'Tugas dipindahkan ke arsip' : 'Tugas dikembalikan dari arsip' }
   } catch (err) {
     return { success: false, error: 'Gagal memperbarui status arsip tugas' }

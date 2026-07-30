@@ -1,6 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Home, CheckSquare, Tags, Settings, LogOut, ClipboardList, Search, User, Calendar, BarChart3, Archive } from 'lucide-react'
 import { signOutAction } from '@/app/login/actions'
 import { Logo } from '@/components/logo'
@@ -107,7 +108,13 @@ export default async function DashboardLayout({
                <Link href="/dashboard/profil" className="flex items-center gap-[12px] overflow-hidden cursor-pointer hover:opacity-80 transition-opacity">
                   <div className="w-[42px] h-[42px] rounded-full bg-gradient-to-br from-[#B48DF0] to-[var(--lilac)] flex items-center justify-center font-[800] text-white text-[15px] shrink-0 overflow-hidden" style={{ boxShadow: '2px 2px 6px var(--shadow-dark), inset 2px 2px 4px rgba(255,255,255,0.4)' }}>
                     {user?.user_metadata?.avatar_url ? (
-                      <img src={user.user_metadata.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+                      <Image 
+                        src={user.user_metadata.avatar_url} 
+                        alt={`Foto profil ${user.user_metadata?.full_name || 'pengguna'}`}
+                        width={42}
+                        height={42}
+                        className="w-full h-full object-cover rounded-full"
+                      />
                     ) : (
                       (user?.user_metadata?.full_name || user?.email || 'U').substring(0, 2).toUpperCase()
                     )}
@@ -122,8 +129,8 @@ export default async function DashboardLayout({
                   </div>
                </Link>
                <form action={signOutAction} className="shrink-0">
-                  <button type="submit" title="Keluar" className="w-[38px] h-[38px] rounded-[12px] flex items-center justify-center text-[var(--ink-soft)] bg-white/40 hover:bg-red-500 hover:text-white transition-all shadow-sm">
-                    <LogOut size={18} strokeWidth={2.5} />
+                  <button type="submit" aria-label="Keluar dari akun" title="Keluar" className="w-[38px] h-[38px] rounded-[12px] flex items-center justify-center text-[var(--ink-soft)] bg-white/40 hover:bg-red-500 hover:text-white transition-all shadow-sm">
+                    <LogOut size={18} strokeWidth={2.5} aria-hidden="true" />
                   </button>
                </form>
             </div>
@@ -132,24 +139,37 @@ export default async function DashboardLayout({
           {/* MAIN */}
           <main className="flex-1 flex flex-col gap-[20px] sm:gap-[28px] w-full min-w-0 pb-[100px] md:pb-[80px]">
             {/* HEADER (Floating Clay) */}
-            <div className="flex items-center justify-between p-[18px_20px] sm:p-[24px_36px] clay">
-              <div className="flex flex-col gap-[2px]">
-                <h2 className="text-[20px] sm:text-[26px] font-[800] text-[var(--ink)] font-heading flex items-center gap-[6px]">
-                  Selamat datang, {user?.user_metadata?.full_name?.split(' ')[0] || 'Pengguna'}. <span className="animate-wave origin-bottom-right inline-block">👋</span>
-                </h2>
-                <p className="text-[12px] sm:text-[14.5px] text-[var(--ink-soft)] font-[600]">Pantau tugas aktifmu hari ini</p>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between p-[18px_20px] sm:p-[24px_36px] clay gap-[16px]">
+              <div className="flex items-start justify-between w-full sm:w-auto">
+                <div className="flex flex-col gap-[2px]">
+                  <h2 className="text-[20px] sm:text-[26px] font-[800] text-[var(--ink)] font-heading flex items-center gap-[6px]">
+                    Selamat datang, {user?.user_metadata?.full_name?.split(' ')[0] || 'Pengguna'}. <span className="animate-wave origin-bottom-right inline-block">👋</span>
+                  </h2>
+                  <p className="text-[12px] sm:text-[14.5px] text-[var(--ink-soft)] font-[600]">Pantau tugas aktifmu hari ini</p>
+                </div>
+                {/* Mobile Profile Link */}
+                <Link href="/dashboard/profil" aria-label="Lihat profil saya" className="sm:hidden block shrink-0 cursor-pointer hover:opacity-80 transition-opacity">
+                  <div className="w-[42px] h-[42px] rounded-full bg-gradient-to-br from-[#B48DF0] to-[var(--lilac)] flex items-center justify-center font-[800] text-white text-[15px] overflow-hidden" style={{ boxShadow: '2px 2px 6px var(--shadow-dark), inset 2px 2px 4px rgba(255,255,255,0.4)' }}>
+                    {user?.user_metadata?.avatar_url ? (
+                      <Image 
+                        src={user.user_metadata.avatar_url}
+                        alt={`Foto profil ${user.user_metadata?.full_name || 'pengguna'}`}
+                        width={42}
+                        height={42}
+                        className="w-full h-full object-cover rounded-full"
+                      />
+                    ) : (
+                      (user?.user_metadata?.full_name || user?.email || '?').charAt(0).toUpperCase()
+                    )}
+                  </div>
+                </Link>
               </div>
-              <div className="flex items-center gap-[16px] sm:gap-[24px]">
-                <form action="/dashboard" method="GET" className="hidden sm:flex items-center gap-[12px] py-[12px] px-[28px] text-[var(--ink-soft)] text-[14.5px] font-[600] w-[300px] rounded-full bg-[var(--clay-raised)] focus-within:ring-[3px] ring-[var(--blossom-soft)] transition-all cursor-text" style={{ boxShadow: 'inset 4px 4px 10px var(--shadow-dark), inset -4px -4px 10px var(--shadow-light)' }}>
+              <div className="flex items-center w-full sm:w-auto">
+                <form action="/dashboard" method="GET" className="flex items-center gap-[12px] py-[12px] px-[20px] sm:px-[28px] text-[var(--ink-soft)] text-[14.5px] font-[600] w-full sm:w-[300px] rounded-full bg-[var(--clay-raised)] focus-within:ring-[3px] ring-[var(--blossom-soft)] transition-all cursor-text" style={{ boxShadow: 'inset 4px 4px 10px var(--shadow-dark), inset -4px -4px 10px var(--shadow-light)' }}>
                   <Search size={18} strokeWidth={2.5} className="text-[var(--blossom)] shrink-0" /> 
                   <input name="q" type="text" placeholder="Cari tugas..." className="bg-transparent border-none outline-none w-full text-[var(--ink)] placeholder:text-[var(--ink-faint)] font-[600]" />
                   <button type="submit" className="hidden">Search</button>
                 </form>
-                <div className="md:hidden w-[42px] h-[42px] rounded-full bg-gradient-to-br from-[#B48DF0] to-[var(--lilac)] flex items-center justify-center font-[800] text-white text-[15px] cursor-pointer shrink-0" style={{
-                  boxShadow: '4px 4px 10px var(--shadow-dark), -4px -4px 10px var(--shadow-light)'
-                }}>
-                  <Search size={20} />
-                </div>
               </div>
             </div>
             {children}
@@ -167,14 +187,17 @@ export default async function DashboardLayout({
           <CheckSquare size={22} strokeWidth={2.5} />
           <span className="text-[10px] font-[700]">Tugas</span>
         </Link>
-        <Link href="/dashboard/kalender" className="flex flex-col items-center gap-[4px] text-[var(--ink-soft)] hover:text-[var(--blossom-dark)] cursor-pointer transition-colors relative">
+        <Link href="/dashboard/kalender" className="flex flex-col items-center gap-[4px] text-[var(--ink-soft)] hover:text-[var(--blossom-dark)] cursor-pointer transition-colors">
           <Calendar size={22} strokeWidth={2.5} />
           <span className="text-[10px] font-[700]">Kalender</span>
-          <span className="absolute top-[-2px] right-[-4px] w-[8px] h-[8px] rounded-full bg-[var(--blossom)] border-2 border-white"></span>
         </Link>
-        <Link href="/dashboard/profil" className="flex flex-col items-center gap-[4px] text-[var(--ink-soft)] hover:text-[var(--blossom-dark)] cursor-pointer transition-colors">
-          <User size={22} strokeWidth={2.5} />
-          <span className="text-[10px] font-[700]">Profil</span>
+        <Link href="/dashboard/arsip" className="flex flex-col items-center gap-[4px] text-[var(--ink-soft)] hover:text-[var(--blossom-dark)] cursor-pointer transition-colors">
+          <Archive size={22} strokeWidth={2.5} />
+          <span className="text-[10px] font-[700]">Arsip</span>
+        </Link>
+        <Link href="/dashboard/pengaturan" className="flex flex-col items-center gap-[4px] text-[var(--ink-soft)] hover:text-[var(--blossom-dark)] cursor-pointer transition-colors">
+          <Settings size={22} strokeWidth={2.5} />
+          <span className="text-[10px] font-[700]">Pengaturan</span>
         </Link>
       </nav>
     </>

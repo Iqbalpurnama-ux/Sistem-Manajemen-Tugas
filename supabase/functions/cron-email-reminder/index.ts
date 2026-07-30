@@ -9,20 +9,28 @@ const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
 // @ts-ignore
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+// @ts-ignore
+const APP_URL = Deno.env.get("NEXT_PUBLIC_APP_URL") || "https://besokaja.vercel.app";
+
+// Sanitize user input to prevent XSS in HTML email
+function sanitizeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
 
 // @ts-ignore
 serve(async (req: Request) => {
   try {
-    // Basic auth check for cron if needed, though pg_net sends the auth header we configured.
-    // Ensure we have required env vars
     if (!RESEND_API_KEY || !SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
       throw new Error("Missing environment variables");
     }
 
-    // Initialize Supabase client with SERVICE_ROLE key to bypass RLS
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-    // Fetch tasks that are due in the next 24 hours and are not 'Done'
     const now = new Date();
     const in24Hours = new Date(now.getTime() + 24 * 60 * 60 * 1000);
 
@@ -56,17 +64,16 @@ serve(async (req: Request) => {
 
     let emailsSent = 0;
 
-    // Process each task
     for (const task of tasks) {
       const userEmail = task.profiles?.email;
-      const userName = task.profiles?.full_name || 'Pengguna BesokAja';
+      const userName = sanitizeHtml(task.profiles?.full_name || 'Pengguna BesokAja');
+      const taskTitle = sanitizeHtml(task.title);
 
       if (!userEmail) continue;
 
       const deadlineTime = new Date(task.deadline).getTime();
       const hoursLeft = (deadlineTime - now.getTime()) / (1000 * 60 * 60);
 
-      // Determine which reminder type to send (1h or 24h)
       let reminderType = '';
       let emailTitle = '';
       let emailMessage = '';
@@ -80,10 +87,10 @@ serve(async (req: Request) => {
         emailTitle = `⏰ Psst... Tugas "${task.title}" nyariin kamu tuh! 👀`;
         emailMessage = 'Tenggat waktu tugasmu tinggal sebentar lagi lho (kurang dari 24 jam). Semangat ngerjainnya ya! 💪';
       } else {
-        continue; // Should not happen due to DB query
+        continue;
       }
 
-      // Idempotency check: Have we already sent this specific reminder for this task?
+      // Idempotency check
       const { data: existingLog } = await supabase
         .from('notifications_log')
         .select('id')
@@ -93,10 +100,17 @@ serve(async (req: Request) => {
 
       if (existingLog) {
         console.log(`${reminderType} already sent for task ${task.id}`);
-        continue; // Skip, already sent
+        continue;
       }
 
-      // Send Email via Resend
+      const deadlineFormatted = new Date(task.deadline).toLocaleString('id-ID', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+
       const res = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
@@ -104,7 +118,7 @@ serve(async (req: Request) => {
           'Authorization': `Bearer ${RESEND_API_KEY}`
         },
         body: JSON.stringify({
-          from: 'BesokAja <noreply@resend.dev>', // Replace with verified domain if you have one
+          from: 'BesokAja <noreply@resend.dev>',
           to: [userEmail],
           subject: emailTitle,
           html: `
@@ -115,17 +129,17 @@ serve(async (req: Request) => {
               <p style="font-size: 16px; color: #8A6B79; line-height: 1.6; margin-bottom: 10px;">${emailMessage}</p>
               
               <div style="background-color: #ffffff; padding: 25px; border-radius: 16px; margin: 30px 0; box-shadow: 0 8px 24px rgba(214,110,150,0.15);">
-                <h3 style="margin-top: 0; color: #3D2436; font-size: 20px; font-weight: 800;">📌 ${task.title}</h3>
+                <h3 style="margin-top: 0; color: #3D2436; font-size: 20px; font-weight: 800;">📌 ${taskTitle}</h3>
                 <div style="background-color: #FDEDD2; display: inline-block; padding: 8px 16px; border-radius: 20px; margin-top: 10px;">
                   <p style="margin: 0; color: #E8A33D; font-weight: bold; font-size: 15px;">
-                    ⏰ ${new Date(task.deadline).toLocaleString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}
+                    ⏰ ${deadlineFormatted}
                   </p>
                 </div>
               </div>
 
               <p style="font-size: 16px; color: #8A6B79; margin-bottom: 30px; font-weight: 600;">Yuk buruan diselesaikan biar hatimu tenang! 🦋</p>
               
-              <a href="http://localhost:3000" style="display: inline-block; background: linear-gradient(135deg, #F1699C, #C22C63); color: white; padding: 16px 32px; text-decoration: none; border-radius: 50px; font-weight: 800; font-size: 16px; box-shadow: 0 4px 15px rgba(194, 44, 99, 0.4);">
+              <a href="${APP_URL}/dashboard" style="display: inline-block; background: linear-gradient(135deg, #F1699C, #C22C63); color: white; padding: 16px 32px; text-decoration: none; border-radius: 50px; font-weight: 800; font-size: 16px; box-shadow: 0 4px 15px rgba(194, 44, 99, 0.4);">
                 🚀 Sikat Tugasnya Sekarang!
               </a>
               
@@ -138,7 +152,6 @@ serve(async (req: Request) => {
       });
 
       if (res.ok) {
-        // Log the successful notification
         await supabase
           .from('notifications_log')
           .insert({

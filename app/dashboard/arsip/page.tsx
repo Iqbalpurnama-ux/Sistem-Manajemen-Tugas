@@ -23,6 +23,7 @@ export default async function ArsipPage() {
       status,
       is_archived,
       deadline,
+      description,
       category:categories(name, color),
       attachments(id, file_name, storage_path, mime_type, file_size)
     `)

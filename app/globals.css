@@ -27,8 +27,8 @@
   --lilac-soft:#EDE6FC;
 
   --ink:#3D2436;
-  --ink-soft:#8A6B79;
-  --ink-faint:#C3A9B5;
+  --ink-soft:#6B4E5C;   /* Improved contrast: 4.6:1 on --clay **/
+  --ink-faint:#8A6B79; /* Improved contrast: was #C3A9B5 (2.2:1 fail) → now 4.5:1 pass WCAG AA */
   --white:#FFFDFE;
 
   --r-lg:28px;
@@ -58,6 +58,29 @@
     min-height: 100vh;
     overflow-x: hidden;
   }
+  /* Skip to main content link (accessibility) */
+  .skip-link {
+    position: absolute;
+    top: -100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--blossom);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 0 0 var(--r-sm) var(--r-sm);
+    font-weight: 700;
+    font-size: 14px;
+    z-index: 9999;
+    transition: top 0.2s;
+    text-decoration: none;
+  }
+  .skip-link:focus {
+    top: 0;
+  }
+
+  /* No scrollbar utility */
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 }
 
 @layer components {

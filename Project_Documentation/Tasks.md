@@ -74,7 +74,7 @@ Sebuah task dianggap **selesai** jika memenuhi seluruh kriteria berikut:
 |---|---|---|---|---|
 | T5.1 | Integrasi akun Resend Email (Verifikasi domain / SPF / DKIM) | 2h | — | ✅ Done |
 | T5.2 | Membuat skrip Supabase Edge Functions (`/cron-email-reminder`) — query deadline + kirim email via Resend | 5h | T5.1, T2.1 | ✅ Done |
-| T5.3 | Konfigurasi trigger `pg_cron` di PostgreSQL Supabase agar memanggil Edge Function setiap jam | 1h | T5.2 | ⬜ To-Do |
+| T5.3 | Konfigurasi trigger `pg_cron` di PostgreSQL Supabase agar memanggil Edge Function setiap jam | 1h | T5.2 | ✅ Done |
 | T5.4 | Logika idempotent — cek `notifications_log` sebelum kirim, insert log setelah kirim | 2h | T5.2 | ✅ Done |
 | T5.5 | UI Polish akhir — responsive testing (mobile 375px, tablet 768px, desktop 1280px), Claymorphism consistency check | 4h | T3.*, T4.* | ⬜ To-Do |
 | T5.6 | End-to-End Testing (Manual) dari login hingga email diterima | 3h | T5.* | ⬜ To-Do |

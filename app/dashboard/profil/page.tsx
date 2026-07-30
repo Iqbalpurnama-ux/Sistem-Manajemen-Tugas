@@ -1,5 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
+import Image from 'next/image'
 import { User, LogOut, Mail, Award, Settings, CheckCircle2, ListTodo } from 'lucide-react'
 import { signOutAction } from '@/app/login/actions'
 import Link from 'next/link'
@@ -51,7 +52,13 @@ export default async function ProfilPage() {
         {/* Avatar */}
         <div className="w-[120px] h-[120px] rounded-full bg-gradient-to-br from-[#F1699C] to-[var(--blossom)] flex items-center justify-center text-white text-[48px] font-heading font-[800] shrink-0 relative" style={{ boxShadow: 'inset 4px 4px 10px rgba(255,255,255,0.4), 6px 6px 14px var(--shadow-dark), -6px -6px 14px var(--shadow-light)' }}>
           {(user?.user_metadata?.avatar_url || profile?.avatar_url) ? (
-            <img src={user?.user_metadata?.avatar_url || profile?.avatar_url} alt="Avatar" className="w-full h-full object-cover rounded-full p-[4px]" />
+            <Image 
+              src={user?.user_metadata?.avatar_url || profile?.avatar_url} 
+              alt={`Foto profil ${profile?.full_name || 'pengguna'}`}
+              width={120}
+              height={120}
+              className="w-full h-full object-cover rounded-full p-[4px]"
+            />
           ) : (
             (profile?.full_name || user.email || '?').charAt(0).toUpperCase()
           )}

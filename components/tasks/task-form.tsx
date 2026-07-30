@@ -163,6 +163,20 @@ export function TaskForm({ onClose, initialData }: TaskFormProps) {
             </p>
           </div>
 
+          <div className="flex flex-col gap-[8px]">
+            <label className="text-[13px] font-[600] text-[var(--ink-soft)]" htmlFor="description">Deskripsi (Opsional)</label>
+            <textarea
+              id="description"
+              name="description"
+              rows={3}
+              defaultValue={initialData?.description || ''}
+              placeholder="Tambahkan catatan atau detail tugas..."
+              disabled={isPending}
+              className="w-full px-[16px] py-[12px] rounded-[var(--r-sm)] bg-[var(--clay-raised)] border-none text-[var(--ink)] font-[500] text-[14px] placeholder:text-[var(--ink-faint)] resize-none focus:outline-none focus:ring-2 focus:ring-[var(--blossom)]"
+              style={{ boxShadow: 'inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light)' }}
+            />
+          </div>
+
 
           {error && (
             <div className="p-[12px] text-[13px] font-[600] text-[var(--blossom-dark)] bg-[var(--blossom-soft)] rounded-[var(--r-sm)]">

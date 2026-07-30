@@ -35,7 +35,7 @@ export function TaskList({ tasks }: TaskListProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-[24px]">
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-[24px]">
         <div className="p-[26px] flex items-center gap-[20px] clay">
           <div className="w-[72px] h-[72px] rounded-full shrink-0 flex items-center justify-center relative" style={{
             background: `conic-gradient(var(--blossom) 100%, rgba(61,36,54,0.08) 0)`,
