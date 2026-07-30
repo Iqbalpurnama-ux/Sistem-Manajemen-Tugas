@@ -53,25 +53,25 @@ export default async function DashboardLayout({
 
             <div className="flex-1 overflow-y-auto no-scrollbar px-[20px] pb-[10px] flex flex-col gap-[30px]">
               <nav className="flex flex-col gap-[10px]">
-                <Link href="/dashboard" className="flex items-center gap-[14px] p-[14px_18px] rounded-[var(--r-sm)] font-[700] text-[15px] cursor-pointer transition-all hover:bg-[var(--clay-raised)] hover:text-[var(--blossom-dark)] hover:clay-tight">
+                <Link href="/dashboard" prefetch={true} className="flex items-center gap-[14px] p-[14px_18px] rounded-[var(--r-sm)] font-[700] text-[15px] cursor-pointer transition-all hover:bg-[var(--clay-raised)] hover:text-[var(--blossom-dark)] hover:clay-tight">
                   <Home size={20} strokeWidth={2.5} /> Dashboard
                 </Link>
-                <Link href="/dashboard" className="flex items-center gap-[14px] p-[14px_18px] rounded-[var(--r-sm)] font-[600] text-[15px] text-[var(--ink-soft)] cursor-pointer hover:text-[var(--blossom-dark)] hover:bg-white/50 transition-all">
+                <Link href="/dashboard" prefetch={true} className="flex items-center gap-[14px] p-[14px_18px] rounded-[var(--r-sm)] font-[600] text-[15px] text-[var(--ink-soft)] cursor-pointer hover:text-[var(--blossom-dark)] hover:bg-white/50 transition-all">
                   <CheckSquare size={20} /> Semua Tugas
                 </Link>
-                <Link href="/dashboard/kalender" className="flex items-center gap-[14px] p-[14px_18px] rounded-[var(--r-sm)] font-[600] text-[15px] text-[var(--ink-soft)] cursor-pointer hover:text-[var(--blossom-dark)] hover:bg-white/50 transition-all">
+                <Link href="/dashboard/kalender" prefetch={true} className="flex items-center gap-[14px] p-[14px_18px] rounded-[var(--r-sm)] font-[600] text-[15px] text-[var(--ink-soft)] cursor-pointer hover:text-[var(--blossom-dark)] hover:bg-white/50 transition-all">
                   <Calendar size={20} /> Kalender
                 </Link>
-                <Link href="/dashboard/analitik" className="flex items-center gap-[14px] p-[14px_18px] rounded-[var(--r-sm)] font-[600] text-[15px] text-[var(--ink-soft)] cursor-pointer hover:text-[var(--blossom-dark)] hover:bg-white/50 transition-all">
+                <Link href="/dashboard/analitik" prefetch={true} className="flex items-center gap-[14px] p-[14px_18px] rounded-[var(--r-sm)] font-[600] text-[15px] text-[var(--ink-soft)] cursor-pointer hover:text-[var(--blossom-dark)] hover:bg-white/50 transition-all">
                   <BarChart3 size={20} /> Analitik
                 </Link>
                 
                 <div className="w-full h-[1px] bg-[var(--shadow-dark)] opacity-50 my-[8px]"></div>
 
-                <Link href="/dashboard/arsip" className="flex items-center gap-[14px] p-[14px_18px] rounded-[var(--r-sm)] font-[600] text-[15px] text-[var(--ink-soft)] cursor-pointer hover:text-[var(--blossom-dark)] hover:bg-white/50 transition-all">
+                <Link href="/dashboard/arsip" prefetch={true} className="flex items-center gap-[14px] p-[14px_18px] rounded-[var(--r-sm)] font-[600] text-[15px] text-[var(--ink-soft)] cursor-pointer hover:text-[var(--blossom-dark)] hover:bg-white/50 transition-all">
                   <Archive size={20} /> Arsip
                 </Link>
-                <Link href="/dashboard/pengaturan" className="flex items-center gap-[14px] p-[14px_18px] rounded-[var(--r-sm)] font-[600] text-[15px] text-[var(--ink-soft)] cursor-pointer hover:text-[var(--blossom-dark)] hover:bg-white/50 transition-all">
+                <Link href="/dashboard/pengaturan" prefetch={true} className="flex items-center gap-[14px] p-[14px_18px] rounded-[var(--r-sm)] font-[600] text-[15px] text-[var(--ink-soft)] cursor-pointer hover:text-[var(--blossom-dark)] hover:bg-white/50 transition-all">
                   <Settings size={20} /> Pengaturan
                 </Link>
               </nav>
@@ -179,23 +179,23 @@ export default async function DashboardLayout({
 
       {/* MOBILE BOTTOM NAVIGATION */}
       <nav className="md:hidden fixed bottom-0 left-0 w-full bg-[var(--clay)]/95 backdrop-blur-xl border-t border-[var(--shadow-light)] p-[12px_24px] pb-[calc(12px+env(safe-area-inset-bottom))] flex justify-between items-center z-[50]" style={{ boxShadow: '0 -4px 20px rgba(214,110,150,0.15)' }}>
-        <Link href="/dashboard" className="flex flex-col items-center gap-[4px] text-[var(--blossom-dark)] cursor-pointer">
+        <Link href="/dashboard" prefetch={true} className="flex flex-col items-center gap-[4px] text-[var(--blossom-dark)] cursor-pointer">
           <Home size={22} strokeWidth={2.5} />
           <span className="text-[10px] font-[800]">Home</span>
         </Link>
-        <Link href="/dashboard" className="flex flex-col items-center gap-[4px] text-[var(--ink-soft)] hover:text-[var(--blossom-dark)] cursor-pointer transition-colors">
+        <Link href="/dashboard" prefetch={true} className="flex flex-col items-center gap-[4px] text-[var(--ink-soft)] hover:text-[var(--blossom-dark)] cursor-pointer transition-colors">
           <CheckSquare size={22} strokeWidth={2.5} />
           <span className="text-[10px] font-[700]">Tugas</span>
         </Link>
-        <Link href="/dashboard/kalender" className="flex flex-col items-center gap-[4px] text-[var(--ink-soft)] hover:text-[var(--blossom-dark)] cursor-pointer transition-colors">
+        <Link href="/dashboard/kalender" prefetch={true} className="flex flex-col items-center gap-[4px] text-[var(--ink-soft)] hover:text-[var(--blossom-dark)] cursor-pointer transition-colors">
           <Calendar size={22} strokeWidth={2.5} />
           <span className="text-[10px] font-[700]">Kalender</span>
         </Link>
-        <Link href="/dashboard/arsip" className="flex flex-col items-center gap-[4px] text-[var(--ink-soft)] hover:text-[var(--blossom-dark)] cursor-pointer transition-colors">
+        <Link href="/dashboard/arsip" prefetch={true} className="flex flex-col items-center gap-[4px] text-[var(--ink-soft)] hover:text-[var(--blossom-dark)] cursor-pointer transition-colors">
           <Archive size={22} strokeWidth={2.5} />
           <span className="text-[10px] font-[700]">Arsip</span>
         </Link>
-        <Link href="/dashboard/pengaturan" className="flex flex-col items-center gap-[4px] text-[var(--ink-soft)] hover:text-[var(--blossom-dark)] cursor-pointer transition-colors">
+        <Link href="/dashboard/pengaturan" prefetch={true} className="flex flex-col items-center gap-[4px] text-[var(--ink-soft)] hover:text-[var(--blossom-dark)] cursor-pointer transition-colors">
           <Settings size={22} strokeWidth={2.5} />
           <span className="text-[10px] font-[700]">Pengaturan</span>
         </Link>
