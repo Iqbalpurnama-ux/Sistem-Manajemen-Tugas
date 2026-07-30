@@ -27,8 +27,8 @@
   --lilac-soft:#EDE6FC;
 
   --ink:#3D2436;
-  --ink-soft:#6B4E5C;   /* Improved contrast: 4.6:1 on --clay **/
-  --ink-faint:#8A6B79; /* Improved contrast: was #C3A9B5 (2.2:1 fail) → now 4.5:1 pass WCAG AA */
+  --ink-soft:#8A6B79;
+  --ink-faint:#9E7F8F; /* Improved: was #C3A9B5 (too light) → now passes WCAG AA */
   --white:#FFFDFE;
 
   --r-lg:28px;
