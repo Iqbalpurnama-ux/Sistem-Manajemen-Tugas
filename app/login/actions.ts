@@ -2,6 +2,7 @@
 
 import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
+import { headers } from 'next/headers'
 
 export async function loginWithMagicLink(formData: FormData) {
   const email = formData.get('email') as string
@@ -34,7 +35,12 @@ export async function loginWithMagicLink(formData: FormData) {
 
 export async function loginWithGoogle() {
   const supabase = await createClient()
-  const siteUrl = process.env.NEXT_PUBLIC_APP_URL ?? process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
+  
+  // Get URL dynamically from request headers
+  const headersList = await headers()
+  const host = headersList.get('host')
+  const protocol = headersList.get('x-forwarded-proto') ?? (process.env.NODE_ENV === 'production' ? 'https' : 'http')
+  const siteUrl = host ? `${protocol}://${host}` : (process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000')
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
