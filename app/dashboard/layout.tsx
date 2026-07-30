@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { Home, CheckSquare, Tags, Settings, LogOut, ClipboardList, Search, User, Calendar, BarChart3, Archive } from 'lucide-react'
 import { signOutAction } from '@/app/login/actions'
+import { Logo } from '@/components/logo'
 
 export default async function DashboardLayout({
   children,
@@ -12,6 +13,17 @@ export default async function DashboardLayout({
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   const { data: categories } = user ? await supabase.from('categories').select('*').eq('user_id', user.id).order('name') : { data: null }
+
+  const tips = [
+    "Rencanakan tugasmu di malam hari, agar pagi bisa langsung eksekusi! 🌙",
+    "Selesaikan tugas tersulitmu di pagi hari, sisanya akan terasa lebih mudah! ✨",
+    "Jangan lupa istirahat sejenak! Otak yang segar akan bekerja lebih cepat. ☕",
+    "Pecah tugas besar menjadi bagian kecil agar tidak terasa memberatkan. 🧩",
+    "Fokus pada satu tugas. Multitasking justru memperlambat ritmemu! 🎯",
+    "Merapikan meja kerja dapat membantu merapikan pikiranmu juga. 🧹",
+    "Berikan apresiasi pada dirimu setiap berhasil menyelesaikan tugas! 🎉",
+  ];
+  const todayTip = tips[new Date().getDay()];
 
   return (
     <>
@@ -29,13 +41,12 @@ export default async function DashboardLayout({
           {/* SIDEBAR (Desktop) - FIXED OVERLAY */}
           <aside className="clay hidden md:flex flex-col w-[280px] h-[calc(100vh-56px)] fixed top-[28px] z-[40]">
             <div className="p-[26px_20px_20px]">
-              <div className="flex items-center gap-[14px] text-[24px] font-[800] text-[var(--blossom-dark)] font-heading">
-                <div className="w-[48px] h-[48px] rounded-[16px] bg-gradient-to-br from-[#F1699C] to-[var(--blossom)] flex items-center justify-center text-white" style={{
-                  boxShadow: '5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light), inset 2px 2px 4px rgba(255,255,255,0.5)'
-                }}>
-                  <ClipboardList size={26} strokeWidth={2.5} />
-                </div>
-                BesokAja
+              <div className="flex items-center gap-[14px] text-[24px] font-[800] font-heading tracking-wide">
+                <Logo className="w-[48px] h-[48px]" />
+                <span>
+                  <span className="text-[#3D2436]">Besok</span>
+                  <span className="text-[#C22C63]">Aja</span>
+                </span>
               </div>
             </div>
 
@@ -68,9 +79,9 @@ export default async function DashboardLayout({
                 <div className="flex flex-col gap-[8px]">
                   <div className="text-[12px] uppercase tracking-[.08em] text-[var(--ink-faint)] font-[800] p-[0_4px_4px]">Kategori</div>
                   {categories.map((cat: any) => (
-                    <div key={cat.id} className="flex items-center gap-[12px] text-[14px] font-[600] text-[var(--ink-soft)] p-[10px_12px] rounded-[14px] cursor-pointer hover:bg-white/60 transition-colors">
+                    <Link href={`/dashboard?category=${cat.id}`} key={cat.id} className="flex items-center gap-[12px] text-[14px] font-[600] text-[var(--ink-soft)] p-[10px_12px] rounded-[14px] cursor-pointer hover:bg-white/60 hover:text-[var(--blossom-dark)] transition-colors">
                       <span className="w-[12px] h-[12px] rounded-full shadow-sm border-2 border-white" style={{ backgroundColor: cat.color || 'var(--blossom)' }}></span> {cat.name}
-                    </div>
+                    </Link>
                   ))}
                 </div>
               )}
@@ -85,7 +96,7 @@ export default async function DashboardLayout({
                     💡 Tips Hari Ini
                   </h4>
                   <p className="text-[11.5px] font-[600] leading-relaxed text-white/95 relative z-10">
-                    Selesaikan tugas tersulitmu di pagi hari, sisanya akan terasa lebih mudah! ✨
+                    {todayTip}
                   </p>
                 </div>
               </div>
@@ -94,8 +105,12 @@ export default async function DashboardLayout({
             {/* Profile & Logout (Sleek Design) */}
             <div className="mx-[20px] mb-[24px] mt-[20px] pt-[20px] border-t border-[var(--shadow-dark)] flex items-center justify-between gap-[10px]">
                <Link href="/dashboard/profil" className="flex items-center gap-[12px] overflow-hidden cursor-pointer hover:opacity-80 transition-opacity">
-                  <div className="w-[42px] h-[42px] rounded-full bg-gradient-to-br from-[#B48DF0] to-[var(--lilac)] flex items-center justify-center font-[800] text-white text-[15px] shrink-0" style={{ boxShadow: '2px 2px 6px var(--shadow-dark), inset 2px 2px 4px rgba(255,255,255,0.4)' }}>
-                    {(user?.user_metadata?.full_name || user?.email || 'U').substring(0, 2).toUpperCase()}
+                  <div className="w-[42px] h-[42px] rounded-full bg-gradient-to-br from-[#B48DF0] to-[var(--lilac)] flex items-center justify-center font-[800] text-white text-[15px] shrink-0 overflow-hidden" style={{ boxShadow: '2px 2px 6px var(--shadow-dark), inset 2px 2px 4px rgba(255,255,255,0.4)' }}>
+                    {user?.user_metadata?.avatar_url ? (
+                      <img src={user.user_metadata.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+                    ) : (
+                      (user?.user_metadata?.full_name || user?.email || 'U').substring(0, 2).toUpperCase()
+                    )}
                   </div>
                   <div className="flex flex-col overflow-hidden">
                     <div className="text-[13.5px] font-[800] text-[var(--ink)] truncate leading-tight mb-[2px]">
@@ -125,10 +140,11 @@ export default async function DashboardLayout({
                 <p className="text-[12px] sm:text-[14.5px] text-[var(--ink-soft)] font-[600]">Pantau tugas aktifmu hari ini</p>
               </div>
               <div className="flex items-center gap-[16px] sm:gap-[24px]">
-                <div className="hidden sm:flex items-center gap-[12px] py-[12px] px-[28px] text-[var(--ink-soft)] text-[14.5px] font-[600] w-[300px] rounded-full bg-[var(--clay-raised)] focus-within:ring-[3px] ring-[var(--blossom-soft)] transition-all cursor-text" style={{ boxShadow: 'inset 4px 4px 10px var(--shadow-dark), inset -4px -4px 10px var(--shadow-light)' }}>
+                <form action="/dashboard" method="GET" className="hidden sm:flex items-center gap-[12px] py-[12px] px-[28px] text-[var(--ink-soft)] text-[14.5px] font-[600] w-[300px] rounded-full bg-[var(--clay-raised)] focus-within:ring-[3px] ring-[var(--blossom-soft)] transition-all cursor-text" style={{ boxShadow: 'inset 4px 4px 10px var(--shadow-dark), inset -4px -4px 10px var(--shadow-light)' }}>
                   <Search size={18} strokeWidth={2.5} className="text-[var(--blossom)] shrink-0" /> 
-                  <input type="text" placeholder="Cari tugas..." className="bg-transparent border-none outline-none w-full text-[var(--ink)] placeholder:text-[var(--ink-faint)] font-[600]" />
-                </div>
+                  <input name="q" type="text" placeholder="Cari tugas..." className="bg-transparent border-none outline-none w-full text-[var(--ink)] placeholder:text-[var(--ink-faint)] font-[600]" />
+                  <button type="submit" className="hidden">Search</button>
+                </form>
                 <div className="md:hidden w-[42px] h-[42px] rounded-full bg-gradient-to-br from-[#B48DF0] to-[var(--lilac)] flex items-center justify-center font-[800] text-white text-[15px] cursor-pointer shrink-0" style={{
                   boxShadow: '4px 4px 10px var(--shadow-dark), -4px -4px 10px var(--shadow-light)'
                 }}>

@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import { TaskCard, TaskWithCategory } from './task-card'
 import { TaskForm } from './task-form'
-import { Bell, Inbox, Plus } from 'lucide-react'
+import { Bell, Inbox, Plus, Layers } from 'lucide-react'
 
 interface TaskListProps {
   tasks: TaskWithCategory[]
@@ -14,10 +14,11 @@ export function TaskList({ tasks }: TaskListProps) {
 
   const [filter, setFilter] = useState<'Semua' | 'To-Do' | 'Done'>('Semua')
 
-  const toDos = tasks.filter(t => t.status === 'To-Do')
-  const done = tasks.filter(t => t.status === 'Done')
+  const activeTasks = tasks.filter(t => !t.is_archived)
+  const toDos = activeTasks.filter(t => t.status === 'To-Do')
+  const done = activeTasks.filter(t => t.status === 'Done')
 
-  const filteredTasks = tasks.filter(task => {
+  const filteredTasks = activeTasks.filter(task => {
     if (filter === 'Semua') return true
     return task.status === filter
   })
@@ -41,20 +42,22 @@ export function TaskList({ tasks }: TaskListProps) {
             boxShadow: '4px 4px 10px var(--shadow-dark), -4px -4px 10px var(--shadow-light)'
           }}>
             <div className="absolute inset-[8px] rounded-full bg-[var(--clay)]" style={{ boxShadow: 'inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light)' }}></div>
-            <span className="relative z-[1] font-heading font-[700] text-[15px] text-[var(--ink)]">100%</span>
+            <span className="relative z-[1] text-[var(--blossom-dark)]">
+              <Layers size={22} strokeWidth={2.5} />
+            </span>
           </div>
           <div>
-            <div className="text-[28px] font-[700] font-heading leading-none text-[var(--ink)]">{tasks.length}</div>
+            <div className="text-[28px] font-[700] font-heading leading-none text-[var(--ink)]">{activeTasks.length}</div>
             <div className="text-[13px] text-[var(--ink-soft)] font-[600] mt-[4px]">Total Tugas</div>
           </div>
         </div>
         <div className="p-[26px] flex items-center gap-[20px] clay">
           <div className="w-[72px] h-[72px] rounded-full shrink-0 flex items-center justify-center relative" style={{
-            background: `conic-gradient(var(--sage) ${tasks.length > 0 ? Math.round((done.length / tasks.length) * 100) : 0}%, rgba(61,36,54,0.08) 0)`,
+            background: `conic-gradient(var(--sage) ${activeTasks.length > 0 ? Math.round((done.length / activeTasks.length) * 100) : 0}%, rgba(61,36,54,0.08) 0)`,
             boxShadow: '4px 4px 10px var(--shadow-dark), -4px -4px 10px var(--shadow-light)'
           }}>
             <div className="absolute inset-[8px] rounded-full bg-[var(--clay)]" style={{ boxShadow: 'inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light)' }}></div>
-            <span className="relative z-[1] font-heading font-[700] text-[15px] text-[var(--ink)]">{tasks.length > 0 ? Math.round((done.length / tasks.length) * 100) : 0}%</span>
+            <span className="relative z-[1] font-heading font-[700] text-[15px] text-[var(--ink)]">{activeTasks.length > 0 ? Math.round((done.length / activeTasks.length) * 100) : 0}%</span>
           </div>
           <div>
             <div className="text-[28px] font-[700] font-heading leading-none text-[var(--ink)]">{done.length}</div>
@@ -63,14 +66,14 @@ export function TaskList({ tasks }: TaskListProps) {
         </div>
         <div className="p-[26px] flex items-center gap-[20px] clay">
           <div className="w-[72px] h-[72px] rounded-full shrink-0 flex items-center justify-center relative" style={{
-            background: `conic-gradient(var(--marigold) ${toDos.length > 0 ? Math.round((tasks.filter(t => t.priority === 'High' && t.status === 'To-Do').length / toDos.length) * 100) : 0}%, rgba(61,36,54,0.08) 0)`,
+            background: `conic-gradient(var(--marigold) ${toDos.length > 0 ? Math.round((activeTasks.filter(t => t.priority === 'High' && t.status === 'To-Do').length / toDos.length) * 100) : 0}%, rgba(61,36,54,0.08) 0)`,
             boxShadow: '4px 4px 10px var(--shadow-dark), -4px -4px 10px var(--shadow-light)'
           }}>
             <div className="absolute inset-[8px] rounded-full bg-[var(--clay)]" style={{ boxShadow: 'inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 4px var(--shadow-light)' }}></div>
-            <span className="relative z-[1] font-heading font-[700] text-[15px] text-[var(--ink)]">{toDos.length > 0 ? Math.round((tasks.filter(t => t.priority === 'High' && t.status === 'To-Do').length / toDos.length) * 100) : 0}%</span>
+            <span className="relative z-[1] font-heading font-[700] text-[15px] text-[var(--ink)]">{toDos.length > 0 ? Math.round((activeTasks.filter(t => t.priority === 'High' && t.status === 'To-Do').length / toDos.length) * 100) : 0}%</span>
           </div>
           <div>
-            <div className="text-[28px] font-[700] font-heading leading-none text-[var(--ink)]">{tasks.filter(t => t.priority === 'High' && t.status === 'To-Do').length}</div>
+            <div className="text-[28px] font-[700] font-heading leading-none text-[var(--ink)]">{activeTasks.filter(t => t.priority === 'High' && t.status === 'To-Do').length}</div>
             <div className="text-[13px] text-[var(--ink-soft)] font-[600] mt-[4px]">Prioritas Tinggi</div>
           </div>
         </div>

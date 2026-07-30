@@ -20,7 +20,8 @@ export default async function KalenderPage() {
     .from('tasks')
     .select(`
       id, title, priority, status, deadline,
-      category:categories(name, color)
+      category:categories(name, color),
+      attachments(id, file_name, storage_path, mime_type, file_size)
     `)
     .eq('user_id', user.id)
     .not('deadline', 'is', null)

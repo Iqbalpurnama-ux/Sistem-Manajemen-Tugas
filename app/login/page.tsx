@@ -1,6 +1,8 @@
 import { loginWithMagicLink, loginWithGoogle } from './actions'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Logo } from '@/components/logo'
+import { Mail } from 'lucide-react'
 
 export default async function LoginPage({
   searchParams,
@@ -15,11 +17,12 @@ export default async function LoginPage({
     <div className="flex-1 flex flex-col w-full px-4 sm:px-8 justify-center gap-2 mx-auto min-h-screen max-w-md">
       {/* Logo & Brand */}
       <div className="text-center mb-6">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/20 shadow-clay-sm mb-4">
-          <span className="text-3xl">📋</span>
+        <div className="inline-flex items-center justify-center mb-4">
+          <Logo className="w-16 h-16" showShadow={false} />
         </div>
-        <h1 className="text-4xl font-heading font-extrabold text-primary tracking-tight">
-          BesokAja
+        <h1 className="text-4xl font-heading font-extrabold tracking-tight">
+          <span className="text-[#3D2436]">Besok</span>
+          <span className="text-[#C22C63]">Aja</span>
         </h1>
         <p className="text-muted-foreground text-sm mt-1 leading-relaxed">
           Manajemen tugas yang cerdas & terpusat
@@ -27,10 +30,13 @@ export default async function LoginPage({
       </div>
 
       {/* Login Card */}
-      <div className="bg-card p-6 sm:p-8 rounded-clay-lg shadow-clay flex flex-col gap-5">
+      <div 
+        className="relative bg-[var(--clay)] p-8 sm:p-10 rounded-[var(--r-lg)] flex flex-col gap-6 w-full mt-4" 
+        style={{ boxShadow: '20px 20px 40px var(--shadow-dark), -20px -20px 40px var(--shadow-light)' }}
+      >
         <div className="text-center">
           <h2 className="text-xl font-heading font-semibold text-foreground">
-            Selamat Datang 👋
+            Selamat Datang
           </h2>
           <p className="text-muted-foreground text-sm mt-1">
             Masuk atau daftar untuk mulai mengelola tugas
@@ -43,10 +49,8 @@ export default async function LoginPage({
           <Button
             formAction={loginWithGoogle}
             formNoValidate
-            className="w-full h-12 text-sm font-medium bg-card text-foreground shadow-clay rounded-clay
-                       hover:shadow-clay-hover hover:-translate-y-0.5
-                       active:shadow-clay-inset active:translate-y-0
-                       transition-all duration-200 border-none"
+            className="w-full h-[48px] text-[14px] font-[700] text-[var(--ink)] bg-[var(--clay-raised)] hover:bg-white transition-all duration-200 border-none rounded-[var(--r-md)]"
+            style={{ boxShadow: '5px 5px 12px var(--shadow-dark), -5px -5px 12px var(--shadow-light)' }}
             type="submit"
           >
             <svg className="w-5 h-5 mr-2 shrink-0" viewBox="0 0 24 24">
@@ -64,7 +68,7 @@ export default async function LoginPage({
               <span className="w-full border-t border-border" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-3 text-muted-foreground font-medium">
+              <span className="bg-[var(--clay)] px-3 text-muted-foreground font-[600]">
                 Atau gunakan Magic Link
               </span>
             </div>
@@ -72,18 +76,16 @@ export default async function LoginPage({
 
           {/* Email Input */}
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-semibold text-foreground" htmlFor="email">
+            <label className="text-[13px] font-[600] text-[var(--ink-soft)]" htmlFor="email">
               Email
             </label>
             <Input
-              className="rounded-clay shadow-clay-inset border-none bg-muted/40 
-                         focus-visible:ring-2 focus-visible:ring-primary 
-                         h-12 px-4 text-base placeholder:text-muted-foreground/60
-                         transition-shadow duration-200"
+              className="rounded-[var(--r-sm)] bg-[var(--clay-raised)] border-none h-[48px] px-[16px] focus-visible:ring-2 focus-visible:ring-[var(--blossom)] text-[var(--ink)] font-[500] placeholder:text-[var(--ink-faint)]"
+              style={{ boxShadow: 'inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light)' }}
               name="email"
               id="email"
               type="email"
-              placeholder="nama@email.com"
+              placeholder="Masukan Email Anda"
               required
               autoComplete="email"
             />
@@ -92,14 +94,12 @@ export default async function LoginPage({
           {/* Magic Link Button */}
           <Button
             formAction={loginWithMagicLink}
-            className="w-full h-12 text-sm font-semibold bg-primary text-primary-foreground 
-                       rounded-clay shadow-clay
-                       hover:shadow-clay-hover hover:-translate-y-0.5
-                       active:shadow-clay-inset active:translate-y-0
-                       transition-all duration-200"
+            className="w-full h-[48px] text-[14px] font-[700] text-white bg-gradient-to-br from-[#F1699C] to-[var(--blossom)] hover:brightness-110 active:scale-95 transition-all rounded-[var(--r-md)] mt-2"
+            style={{ boxShadow: '5px 5px 12px var(--shadow-dark), -5px -5px 12px var(--shadow-light)' }}
             type="submit"
           >
-            ✉️ Kirim Magic Link
+            <Mail className="w-4 h-4 mr-2 shrink-0" />
+            Kirim Magic Link
           </Button>
 
           {/* Message Display */}

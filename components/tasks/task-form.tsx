@@ -1,6 +1,7 @@
 'use client'
 
-import React, { useState, useTransition } from 'react'
+import React, { useState, useTransition, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { createTask, editTask } from '@/lib/actions/tasks'
 import { getOrCreateCategory } from '@/lib/actions/categories'
 import { Button } from '@/components/ui/button'
@@ -21,6 +22,11 @@ export function TaskForm({ onClose, initialData }: TaskFormProps) {
   const [categoryName, setCategoryName] = useState(initialData?.category?.name || '')
   const [priority, setPriority] = useState(initialData?.priority || 'Medium')
   const [isPriorityOpen, setIsPriorityOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -28,6 +34,13 @@ export function TaskForm({ onClose, initialData }: TaskFormProps) {
     setError(null)
     
     startTransition(async () => {
+      // Fix deadline timezone issue
+      const localDeadline = formData.get('deadline') as string
+      if (localDeadline) {
+        const date = new Date(localDeadline)
+        formData.set('deadline', date.toISOString())
+      }
+
       let categoryId = ''
       
       // Handle Hybrid Category
@@ -57,7 +70,9 @@ export function TaskForm({ onClose, initialData }: TaskFormProps) {
     })
   }
 
-  return (
+  if (!mounted) return null
+
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0">
       {/* Backdrop */}
       <div 
@@ -77,7 +92,6 @@ export function TaskForm({ onClose, initialData }: TaskFormProps) {
               name="title" 
               required 
               defaultValue={initialData?.title}
-              placeholder="Apa yang perlu diselesaikan?" 
               className="rounded-[var(--r-sm)] bg-[var(--clay-raised)] border-none h-[48px] px-[16px] focus-visible:ring-2 focus-visible:ring-[var(--blossom)] text-[var(--ink)] font-heading font-[600] text-[15px]"
               style={{ boxShadow: 'inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light)' }}
               disabled={isPending}
@@ -140,7 +154,6 @@ export function TaskForm({ onClose, initialData }: TaskFormProps) {
               id="category" 
               value={categoryName}
               onChange={(e) => setCategoryName(e.target.value)}
-              placeholder="Contoh: Kuliah, Pekerjaan" 
               className="rounded-[var(--r-sm)] bg-[var(--clay-raised)] border-none h-[48px] px-[16px] focus-visible:ring-2 focus-visible:ring-[var(--blossom)] text-[var(--ink)] font-[500]"
               style={{ boxShadow: 'inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light)' }}
               disabled={isPending}
@@ -149,6 +162,7 @@ export function TaskForm({ onClose, initialData }: TaskFormProps) {
               Ketik nama kategori baru atau yang sudah ada.
             </p>
           </div>
+
 
           {error && (
             <div className="p-[12px] text-[13px] font-[600] text-[var(--blossom-dark)] bg-[var(--blossom-soft)] rounded-[var(--r-sm)]">
@@ -176,6 +190,7 @@ export function TaskForm({ onClose, initialData }: TaskFormProps) {
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }

@@ -3,7 +3,15 @@ import { redirect } from 'next/navigation'
 import { TaskList } from '@/components/tasks/task-list'
 import { TaskWithCategory } from '@/components/tasks/task-card'
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ category?: string, q?: string }>
+}) {
+  const resolvedParams = await searchParams
+  const categoryFilter = resolvedParams?.category
+  const searchQuery = resolvedParams?.q
+  
   const supabase = await createClient()
 
   // Pastikan user sudah login
@@ -21,18 +29,29 @@ export default async function DashboardPage() {
   }
 
   // Fetch tugas & relasi kategorinya
-  const { data: tasks, error: fetchError } = await supabase
+  let query = supabase
     .from('tasks')
     .select(`
       id,
       title,
       priority,
       status,
+      is_archived,
       deadline,
-      category:categories(name, color)
+      category:categories(name, color),
+      attachments(id, file_name, storage_path, mime_type, file_size)
     `)
     .eq('user_id', user.id)
-    .order('created_at', { ascending: false })
+    
+  if (categoryFilter) {
+    query = query.eq('category_id', categoryFilter)
+  }
+
+  if (searchQuery) {
+    query = query.ilike('title', `%${searchQuery}%`)
+  }
+
+  const { data: tasks, error: fetchError } = await query.order('created_at', { ascending: false })
 
   if (fetchError) {
     console.error('Error fetching tasks:', fetchError.message)

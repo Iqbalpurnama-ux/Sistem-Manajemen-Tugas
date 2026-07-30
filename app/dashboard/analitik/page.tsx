@@ -16,8 +16,9 @@ export default async function AnalitikPage() {
   const { data: tasks } = await supabase
     .from('tasks')
     .select(`
-      id, priority, status,
-      category:categories(name, color)
+      id, priority, status, deadline,
+      category:categories(name, color),
+      attachments(id, file_name, storage_path, mime_type, file_size)
     `)
     .eq('user_id', user.id)
 

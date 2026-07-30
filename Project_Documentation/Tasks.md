@@ -59,12 +59,12 @@ Sebuah task dianggap **selesai** jika memenuhi seluruh kriteria berikut:
 
 | ID | Task | Est. | Dependency | Status |
 |---|---|---|---|---|
-| T4.1 | Membuat Supabase Storage Bucket `task_files` | 0.5h | T1.3 | ⬜ To-Do |
-| T4.2 | Menulis RLS spesifik untuk Bucket (hanya authenticated user yang dapat mengunggah, hanya pemilik task yang bisa mengunduh) | 1h | T4.1 | ⬜ To-Do |
-| T4.3 | Membangun komponen `FileDropzone` — drag & drop + progress indicator, responsif untuk mobile dan desktop | 4h | T1.4 | ⬜ To-Do |
-| T4.4 | Implementasi direct client-to-storage upload (Supabase JS Client) — **tanpa melalui Vercel** untuk menghindari timeout | 3h | T4.1, T4.3 | ⬜ To-Do |
-| T4.5 | Modifikasi Server Action untuk menyimpan metadata file ke tabel `attachments` | 2h | T3.3, T4.4 | ⬜ To-Do |
-| T4.6 | Implementasi download file dengan Signed URL (expire 1 jam) | 2h | T4.2 | ⬜ To-Do |
+| T4.1 | Membuat Supabase Storage Bucket `task_files` | 0.5h | T1.3 | ✅ Done |
+| T4.2 | Menulis RLS spesifik untuk Bucket (hanya authenticated user yang dapat mengunggah, hanya pemilik task yang bisa mengunduh) | 1h | T4.1 | ✅ Done |
+| T4.3 | Membangun komponen `FileDropzone` — drag & drop + progress indicator, responsif untuk mobile dan desktop | 4h | T1.4 | ✅ Done |
+| T4.4 | Implementasi direct client-to-storage upload (Supabase JS Client) — **tanpa melalui Vercel** untuk menghindari timeout | 3h | T4.1, T4.3 | ✅ Done |
+| T4.5 | Modifikasi Server Action untuk menyimpan metadata file ke tabel `attachments` | 2h | T3.3, T4.4 | ✅ Done |
+| T4.6 | Implementasi download file dengan Signed URL (expire 1 jam) | 2h | T4.2 | ✅ Done |
 
 ---
 
@@ -72,10 +72,10 @@ Sebuah task dianggap **selesai** jika memenuhi seluruh kriteria berikut:
 
 | ID | Task | Est. | Dependency | Status |
 |---|---|---|---|---|
-| T5.1 | Integrasi akun Resend Email (Verifikasi domain / SPF / DKIM) | 2h | — | ⬜ To-Do |
-| T5.2 | Membuat skrip Supabase Edge Functions (`/cron-email-reminder`) — query deadline + kirim email via Resend | 5h | T5.1, T2.1 | ⬜ To-Do |
+| T5.1 | Integrasi akun Resend Email (Verifikasi domain / SPF / DKIM) | 2h | — | ✅ Done |
+| T5.2 | Membuat skrip Supabase Edge Functions (`/cron-email-reminder`) — query deadline + kirim email via Resend | 5h | T5.1, T2.1 | ✅ Done |
 | T5.3 | Konfigurasi trigger `pg_cron` di PostgreSQL Supabase agar memanggil Edge Function setiap jam | 1h | T5.2 | ⬜ To-Do |
-| T5.4 | Logika idempotent — cek `notifications_log` sebelum kirim, insert log setelah kirim | 2h | T5.2 | ⬜ To-Do |
+| T5.4 | Logika idempotent — cek `notifications_log` sebelum kirim, insert log setelah kirim | 2h | T5.2 | ✅ Done |
 | T5.5 | UI Polish akhir — responsive testing (mobile 375px, tablet 768px, desktop 1280px), Claymorphism consistency check | 4h | T3.*, T4.* | ⬜ To-Do |
 | T5.6 | End-to-End Testing (Manual) dari login hingga email diterima | 3h | T5.* | ⬜ To-Do |
 | T5.7 | Performance audit — Lighthouse score ≥ 90, zero layout shift, no jank scroll | 2h | T5.5 | ⬜ To-Do |

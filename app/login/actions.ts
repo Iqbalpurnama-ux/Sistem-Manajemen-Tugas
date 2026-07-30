@@ -23,7 +23,10 @@ export async function loginWithMagicLink(formData: FormData) {
 
   if (error) {
     console.error('Magic Link Error:', error.message)
-    return redirect(`/login?message=${encodeURIComponent(error.message)}&type=error`)
+    const errMsg = error.message === '{}' 
+      ? 'Terlalu banyak permintaan atau jaringan bermasalah. Tunggu beberapa saat.' 
+      : (error.message || 'Gagal mengirim Magic Link')
+    return redirect(`/login?message=${encodeURIComponent(errMsg)}&type=error`)
   }
 
   return redirect(`/login?message=${encodeURIComponent('Cek email Anda untuk tautan masuk!')}&type=success`)
